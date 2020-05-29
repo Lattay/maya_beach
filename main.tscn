@@ -1,0 +1,184 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/beach.png" type="Texture" id=1]
+[ext_resource path="res://entities/forest_piece.tscn" type="PackedScene" id=2]
+[ext_resource path="res://entities/way_out.tscn" type="PackedScene" id=3]
+[ext_resource path="res://entities/boat.tscn" type="PackedScene" id=4]
+[ext_resource path="res://entities/big_deck.tscn" type="PackedScene" id=5]
+[ext_resource path="res://entities/couple.tscn" type="PackedScene" id=6]
+
+[sub_resource type="Animation" id=1]
+resource_name = "enter"
+length = 2.0
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( -103.471, -0.25, 0, 0.04, 100.295, 549.686, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 717.533, -0.25, 0, 0.16, -120.04, 588.621, -1.28, -5.52747, 0.25, 0 ),
+"times": PoolRealArray( 0, 2 )
+}
+tracks/2/type = "bezier"
+tracks/2/path = NodePath(".:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 96.1825, -0.222885, -16, 0.355797, 9.57852, 90, -1.01536, -6.44595, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.5, 1.7 )
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "swim_to_beach"
+length = 2.0
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 550.646, -0.25, 0, 0.25, 0, 554.076, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 538.681, -0.25, 0, 0.25, 0, 288.327, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2 )
+}
+
+[node name="main" type="Node2D"]
+
+[node name="background" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite" parent="background"]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="sea_area" type="Area2D" parent="background/Sprite"]
+visible = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="background/Sprite/sea_area"]
+polygon = PoolVector2Array( -4.37756, 684.881, -6, 335, 143.822, 351.689, 275, 425, 368.525, 424.096, 463.694, 342.645, 552.861, 338.358, 687.469, 387.229, 854.657, 401.804, 947.755, 376.083, 1089.22, 375.225, 1208.4, 336.644, 1212.8, 684.881, 561.857, 694.871 )
+
+[node name="way_out" parent="." instance=ExtResource( 3 )]
+position = Vector2( 718, 68 )
+scale = Vector2( 0.4, 0.4 )
+
+[node name="boat_driver_enter" type="Position2D" parent="."]
+position = Vector2( 549.686, 588.621 )
+rotation = 1.5708
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 100.0
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="boat_driver_enter"]
+anims/enter = SubResource( 1 )
+
+[node name="swiming_tourist_driver" type="Position2D" parent="."]
+position = Vector2( 550.646, 538.681 )
+__meta__ = {
+"_gizmo_extents_": 100.0
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="swiming_tourist_driver"]
+anims/swim_to_beach = SubResource( 2 )
+
+[node name="boat" parent="." instance=ExtResource( 4 )]
+position = Vector2( 609.447, 405.325 )
+
+[node name="decks" type="Node2D" parent="."]
+position = Vector2( 547.186, 305.666 )
+
+[node name="deck_1" type="Position2D" parent="decks"]
+
+[node name="big_deck" parent="decks/deck_1" instance=ExtResource( 5 )]
+
+[node name="deck_2" type="Position2D" parent="decks"]
+position = Vector2( 276.165, 68.59 )
+
+[node name="deck_3" type="Position2D" parent="decks"]
+position = Vector2( -192.153, 73.2066 )
+rotation = -0.375246
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="deck_4" type="Position2D" parent="decks"]
+position = Vector2( 149.815, 37.0025 )
+
+[node name="deck_5" type="Position2D" parent="decks"]
+position = Vector2( 410.638, 46.0275 )
+
+[node name="deck_6" type="Position2D" parent="decks"]
+position = Vector2( -300.532, 55.0526 )
+rotation = 0.18675
+
+[node name="deck_7" type="Position2D" parent="decks"]
+position = Vector2( 574.392, 27.9131 )
+
+[node name="deck_8" type="Position2D" parent="decks"]
+position = Vector2( -473.708, 3.35834 )
+
+[node name="couple" parent="." instance=ExtResource( 6 )]
+position = Vector2( 554.916, 408.496 )
+
+[node name="forest" type="Node2D" parent="."]
+
+[node name="forest_piece" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 122.814, 66.9639 )
+
+[node name="forest_piece2" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 479.601, 94.6648 )
+
+[node name="forest_piece3" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 110.626, 219.872 )
+
+[node name="forest_piece4" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 298.992, 21.5346 )
+
+[node name="forest_piece5" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 294.559, 157.823 )
+
+[node name="forest_piece6" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( -42.2826, 135.662 )
+
+[node name="forest_piece7" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 568.244, -19.4627 )
+
+[node name="forest_piece9" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 905.086, 11.5622 )
+
+[node name="forest_piece10" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 1050.24, 110.177 )
+
+[node name="forest_piece11" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 1142.2, -13.9225 )
+
+[node name="forest_piece12" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 1230.85, 189.956 )
+
+[node name="forest_piece13" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 866.986, 162.016 )
+
+[node name="forest_piece14" parent="forest" instance=ExtResource( 2 )]
+position = Vector2( 1028.52, 258.978 )

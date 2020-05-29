@@ -1,0 +1,80 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/mockup.png" type="Texture" id=1]
+
+[sub_resource type="Animation" id=2]
+resource_name = "blue"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:region_rect")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Rect2( 209.383, 540.297, 154.327, 138.985 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "orange"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:region_rect")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Rect2( 224.737, 706.944, 150.734, 150.734 ) ]
+}
+
+[sub_resource type="Animation" id=1]
+resource_name = "red"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:region_rect")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Rect2( 33.4242, 533.98, 155.202, 146.205 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "sky"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:region_rect")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Rect2( 37.8267, 699.407, 150.734, 147.719 ) ]
+}
+
+[node name="flag" type="Sprite"]
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( -20, -130 )
+region_enabled = true
+region_rect = Rect2( 209.383, 540.297, 154.327, 138.985 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/blue = SubResource( 2 )
+anims/orange = SubResource( 3 )
+anims/red = SubResource( 1 )
+anims/sky = SubResource( 4 )
