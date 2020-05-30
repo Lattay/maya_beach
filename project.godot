@@ -30,6 +30,13 @@ window/size/height=675
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
+[layer_names]
+
+2d_physics/layer_1="world"
+2d_physics/layer_2="collidable_earth"
+2d_physics/layer_3="collidable_sea"
+2d_physics/layer_8="clickable"
+
 [rendering]
 
 quality/driver/driver_name="GLES2"

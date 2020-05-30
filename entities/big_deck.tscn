@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://assets/mockup.png" type="Texture" id=1]
+[ext_resource path="res://entities/deck.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 29.8864, 87.1245 )
@@ -8,7 +9,8 @@ extents = Vector2( 29.8864, 87.1245 )
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 27.0215, 12.6243 )
 
-[node name="big_deck" type="Node2D"]
+[node name="big_deck" type="StaticBody2D"]
+script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 1.24242, 72.2195 )

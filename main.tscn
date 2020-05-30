@@ -1,11 +1,12 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/beach.png" type="Texture" id=1]
 [ext_resource path="res://entities/forest_piece.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/way_out.tscn" type="PackedScene" id=3]
-[ext_resource path="res://entities/boat.tscn" type="PackedScene" id=4]
-[ext_resource path="res://entities/big_deck.tscn" type="PackedScene" id=5]
+[ext_resource path="res://components/anchor.gd" type="Script" id=4]
 [ext_resource path="res://entities/couple.tscn" type="PackedScene" id=6]
+[ext_resource path="res://main.gd" type="Script" id=7]
+[ext_resource path="res://entities/boat_driver_enter.gd" type="Script" id=8]
 
 [sub_resource type="Animation" id=1]
 resource_name = "enter"
@@ -66,6 +67,7 @@ tracks/1/keys = {
 }
 
 [node name="main" type="Node2D"]
+script = ExtResource( 7 )
 
 [node name="background" type="Node2D" parent="."]
 
@@ -84,15 +86,22 @@ position = Vector2( 718, 68 )
 scale = Vector2( 0.4, 0.4 )
 
 [node name="boat_driver_enter" type="Position2D" parent="."]
-position = Vector2( 549.686, 588.621 )
-rotation = 1.5708
+position = Vector2( -103.471, 717.533 )
+script = ExtResource( 8 )
 __meta__ = {
-"_edit_group_": true,
 "_gizmo_extents_": 100.0
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="boat_driver_enter"]
 anims/enter = SubResource( 1 )
+
+[node name="sea_anchor" type="Position2D" parent="."]
+position = Vector2( 549.686, 588.621 )
+rotation = 1.5708
+script = ExtResource( 4 )
+__meta__ = {
+"_gizmo_extents_": 100.0
+}
 
 [node name="swiming_tourist_driver" type="Position2D" parent="."]
 position = Vector2( 550.646, 538.681 )
@@ -103,15 +112,12 @@ __meta__ = {
 [node name="AnimationPlayer" type="AnimationPlayer" parent="swiming_tourist_driver"]
 anims/swim_to_beach = SubResource( 2 )
 
-[node name="boat" parent="." instance=ExtResource( 4 )]
-position = Vector2( 609.447, 405.325 )
+[node name="boat_container" type="Node2D" parent="."]
 
 [node name="decks" type="Node2D" parent="."]
 position = Vector2( 547.186, 305.666 )
 
 [node name="deck_1" type="Position2D" parent="decks"]
-
-[node name="big_deck" parent="decks/deck_1" instance=ExtResource( 5 )]
 
 [node name="deck_2" type="Position2D" parent="decks"]
 position = Vector2( 276.165, 68.59 )
@@ -182,3 +188,4 @@ position = Vector2( 866.986, 162.016 )
 
 [node name="forest_piece14" parent="forest" instance=ExtResource( 2 )]
 position = Vector2( 1028.52, 258.978 )
+[connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]

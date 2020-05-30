@@ -17,3 +17,9 @@ For today I spend some time building the basic blocks in godot, assembling quick
 I used a lot of Position2D to create drivers for diverse movements.
 I'll also try to generate random walk for the tourists.
 I have to think about how the boat arrives, how long should be the visit and how it should evolve.
+
+## Day 2
+
+Did had enough time today either unfortunatly.
+I tried to design the boat and deck mecanisms, hopefully I can get at least that to work tommorow.
+I should also start working on the tourist IA.
