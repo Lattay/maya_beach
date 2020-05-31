@@ -28,14 +28,17 @@ func has_free_anchor():
 func reserve_free_anchor():
     match dock_size:
         DockSize.SMALL:
-            if is_free:
+            if is_free[0]:
+                is_free[0] = false
                 return anchors[0]
             else:
                 return null
         DockSize.BIG:
             if is_free[0]:
+                is_free[0] = false
                 return anchors[0]
             elif is_free[1]:
+                is_free[1] = false
                 return anchors[1]
             else:
                 return null                

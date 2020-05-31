@@ -20,7 +20,7 @@ onready var sea_anchor = $sea_anchor
 var capacity  # capacity of the beach in number of people
 var forest  # number of forest pieces left
 var docks = 0  # number of anchor available
-var boats = 1 # number of boat availables
+export(int) var boats = 1 # number of boat availables
 
 # Real time variables
 var popularity = 2  # 
@@ -35,7 +35,7 @@ var satisfaction = 0
 var trash = 0
 var hype = 1
 var people_waiting = 0
-var free_boat = 1
+onready var free_boat = boats
 
 
 # Called when the node enters the scene tree for the first time.
@@ -96,10 +96,11 @@ func available_dock_slot():
             return child
 
 func boat_arrive():
-    var boat = Boat.instance()
-    boat_driver_enter.add_child(boat)
-    boat_driver_enter.start(boat)
-    free_boat -= 1
+    if free_boat > 0:
+        var boat = Boat.instance()
+        boat_driver_enter.add_child(boat)
+        boat_driver_enter.start(boat)
+        free_boat -= 1
 
 
 
