@@ -15,6 +15,7 @@ onready var target_containers = $tourist_targets
 
 onready var boat_driver_enter = $boat_driver_enter
 onready var sea_anchor = $sea_anchor
+onready var click_controller = $click
 
 # Parameters
 var capacity  # capacity of the beach in number of people
@@ -102,8 +103,6 @@ func boat_arrive():
         boat_driver_enter.start(boat)
         free_boat -= 1
 
-
-
 func _on_boat_driver_entered(_anim_name: String) -> void:
     var boat = boat_driver_enter.tracked_boat
     var pos = boat.get_global_position()
@@ -117,12 +116,12 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     boat.connect("leave_dock", self, "_on_boat_leave_dock")
     boat.connect("leave_screen", self, "_on_boat_leave_screen")
     boat.connect("disembark", self, "_on_disembark")
+    
+    boat.connect("drag_to_dock", click_controller, "_on_drag_to_dock")
+    boat.connect("release_on_boat", click_controller, "_on_release_on_boat")
 
-func _on_boat_go_to_dock(boat):
-    var free_dock = get_free_dock()
-    if free_dock:
-        boat_driver_enter.reset()
-        boat.go_to_dock(free_dock)
+func _on_boat_go_to_dock(_boat):
+    boat_driver_enter.reset()
 
 func _on_boat_leave_dock(boat, dock):
     # TODO get the right anchor index from boat ?

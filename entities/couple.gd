@@ -23,7 +23,7 @@ var velocity = Vector2.ZERO
 
 var target
 
-func _process(dt: float) -> void:
+func _process(_dt: float) -> void:
     match state:
         State.GO_TO:
             if get_global_position().distance_to(target) < 20:
