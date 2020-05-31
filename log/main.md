@@ -20,6 +20,10 @@ I have to think about how the boat arrives, how long should be the visit and how
 
 ## Day 2
 
-Did had enough time today either unfortunatly.
+I had not enough time today either unfortunatly.
 I tried to design the boat and dock mecanisms, hopefully I can get at least that to work tommorow.
 I should also start working on the tourist IA.
+
+## Day 3
+
+Boat is docking, but the detection of "free" anchor is broken. People are disembarking and chilling around.
