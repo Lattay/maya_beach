@@ -26,4 +26,6 @@ I should also start working on the tourist IA.
 
 ## Day 3
 
-Boat is docking, but the detection of "free" anchor is broken. People are disembarking and chilling around.
+Boat is docking, on a free anchor. Boat spawn is limited.
+Started to refactor input into a central click.gd script to allow drag and drop mecanisms
+People are disembarking and chilling around.
