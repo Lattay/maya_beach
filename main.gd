@@ -1,20 +1,29 @@
 extends Node2D
 
-const Deck = preload("res://entities/deck.gd")
-const SmallDeck = preload("res://entities/small_deck.tscn")
-const BigDeck = preload("res://entities/big_deck.tscn")
+const Dock = preload("res://entities/dock.gd")
+const SmallDock = preload("res://entities/small_dock.tscn")
+const BigDock = preload("res://entities/big_dock.tscn")
 const Boat = preload("res://entities/boat.tscn")
 
+var rng = RandomNumberGenerator.new()
+
 onready var forest_container = $forest
-onready var deck_container = $decks
+onready var dock_container = $docks
 onready var boat_container = $boat_container
+onready var tourist_container = $tourists
+onready var target_containers = $tourist_targets
 
 onready var boat_driver_enter = $boat_driver_enter
 onready var sea_anchor = $sea_anchor
 
-var capacity
-var forest
-var popularity = 2
+# Parameters
+var capacity  # capacity of the beach in number of people
+var forest  # number of forest pieces left
+var docks = 0  # number of anchor available
+var boats = 1 # number of boat availables
+
+# Real time variables
+var popularity = 2  # 
 var advise = 0
 var eco_angst = 0
 var bad_buzz = 0
@@ -23,44 +32,11 @@ var visit_per_day
 var visit_cost
 var side_earning
 var satisfaction = 0
-var decks = 0
 var trash = 0
+var hype = 1
+var people_waiting = 0
+var free_boat = 1
 
-
-
-func update_vars():
-    forest = forest_container.get_child_count()
-    capacity = 200 - 12 * forest
-
-func create_deck():
-    var slot = available_deck_slot()
-    if slot:
-        var deck = SmallDeck.instance()
-        slot.add_child(deck)
-        decks += 1
-    
-func upgrade_deck():
-    var slot = upgradable_deck()
-    if slot:
-        # upgrade deck
-        decks += 1
-    
-func upgradable_deck():
-    for slot in deck_container.get_children():
-        if slot.children_count() != 0:
-            var deck = slot.get_child(0)
-            if deck.deck_size == "small":
-                return slot
-
-func available_deck_slot():
-    for child in deck_container.get_children():
-        if child.children_count() == 0:
-            return child
-
-func boat_arrive():
-    var boat = Boat.instance()
-    boat_driver_enter.add_child(boat)
-    boat_driver_enter.start()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -69,50 +45,115 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-    eco_angst += (decks + trash - (forest - 10)) * delta
-    popularity += (advise - eco_angst - bad_buzz + satisfaction) * delta
-    earning = visit_per_day * visit_cost + side_earning    
-    
+    # people_waiting += delta * (popularity + hype)
+        
     visit_per_day = 10
     visit_cost = 1
     side_earning = 0
+    
+    eco_angst += (docks + trash - (forest - 10)) * delta
+    popularity += (advise - eco_angst - bad_buzz + satisfaction) * delta
+    earning = visit_per_day * visit_cost + side_earning    
+
+    
+    if people_waiting >= 10 and free_boat  > 0:
+        people_waiting -= 10
+        boat_arrive()
+    
+    if Input.is_action_just_pressed("create_dock"):
+        create_dock()
+    if Input.is_action_just_pressed("accept_boat"):
+        boat_arrive()
 
 
-func _on_boat_driver_entered(anim_name: String) -> void:
-    var boat = boat_driver_enter.get_child(0) as Node2D
+func update_vars():
+    forest = forest_container.get_child_count()
+    capacity = 200 - 12 * forest
+
+func create_dock():
+    var slot = available_dock_slot()
+    if slot:
+        var dock = SmallDock.instance()
+        slot.add_child(dock)
+        docks += 1
+    
+func upgrade_dock():
+    var slot = upgradable_dock()
+    if slot:
+        # upgrade dock
+        docks += 1
+    
+func upgradable_dock():
+    for slot in dock_container.get_children():
+        if slot.get_child_count() != 0:
+            var dock = slot.get_child(0)
+            if dock.dock_size == "small":
+                return slot
+
+func available_dock_slot():
+    for child in dock_container.get_children():
+        if child.get_child_count() == 0:
+            return child
+
+func boat_arrive():
+    var boat = Boat.instance()
+    boat_driver_enter.add_child(boat)
+    boat_driver_enter.start(boat)
+    free_boat -= 1
+
+
+
+func _on_boat_driver_entered(_anim_name: String) -> void:
+    var boat = boat_driver_enter.tracked_boat
     var pos = boat.get_global_position()
     var rot = boat.get_global_rotation()
     boat_driver_enter.remove_child(boat)
     boat_container.add_child(boat)
     boat.set_global_position(pos)
     boat.set_global_rotation(rot)
-    boat.wait_user()
-    boat.connect("go_to_deck", self, "_on_boat_go_to_deck")
-    boat.connect("leave_deck", self, "_on_boat_leave_deck")
-    
-func _on_boat_go_to_deck(boat):
-    var free_anchor = get_free_anchor()
-    if free_anchor:
+    boat.wait_for_slot()
+    boat.connect("go_to_dock", self, "_on_boat_go_to_dock")
+    boat.connect("leave_dock", self, "_on_boat_leave_dock")
+    boat.connect("leave_screen", self, "_on_boat_leave_screen")
+    boat.connect("disembark", self, "_on_disembark")
+
+func _on_boat_go_to_dock(boat):
+    var free_dock = get_free_dock()
+    if free_dock:
         boat_driver_enter.reset()
-        boat.go_to_deck(free_anchor)
+        boat.go_to_dock(free_dock)
 
-func _on_boat_leave_deck(deck):
-    deck.set_free()
+func _on_boat_leave_dock(boat, dock):
+    # TODO get the right anchor index from boat ?
+    dock.free_anchor(boat.get_attached_anchor_index())
 
-func get_free_anchor():
-    if deck_container.get_children_count == 0:
+func _on_boat_leave_screen(boat):
+    boat.queue_free()
+    free_boat += 1
+    
+func _on_disembark(_boat, dock, people):
+    var target = dock.get_node("target")
+    var spawner = dock.get_node("spawner")
+    people.set_global_position(spawner.get_global_position())
+    people.leave_dock(target.get_global_position())
+    tourist_container.add_child(people)
+    people.connect("ask_for_target", self, "_on_ask_for_target")
+    
+func get_free_dock():
+    if dock_container.get_child_count() == 0:
         return sea_anchor
     
-    for slot in deck_container.get_children():
-        if slot.children_count() != 0:
-            var deck = slot.get_child(0)
-            match deck.deck_size:
-                Deck.DeckSize.SMALL:
-                    if deck.is_free:
-                        return deck.get_node("anchor")
-                Deck.DeckSize.BIG:
-                    if deck.is_free_left:
-                        return deck.get_node("anchor_left")
-                    elif deck.is_free_right:
-                        return deck.get_node("anchor_right")
+    for slot in dock_container.get_children():
+        if slot.get_child_count() != 0:
+            var dock = slot.get_child(0)
+            if dock.has_free_anchor():
+                return dock
     return null
+
+func _on_ask_for_target(people, prev_target):
+    var target_n = target_containers.get_child_count()
+    var target = target_containers.get_child(rng.randi_range(0, target_n-1)).get_global_position()
+    while target.distance_to(prev_target) < 200:
+        target = target_containers.get_child(rng.randi_range(0, target_n-1)).get_global_position()
+    
+    people.set_target(target)

@@ -30,11 +30,25 @@ window/size/height=675
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
+[input]
+
+create_dock={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+}
+accept_boat={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":66,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
 [layer_names]
 
 2d_physics/layer_1="world"
 2d_physics/layer_2="collidable_earth"
 2d_physics/layer_3="collidable_sea"
+2d_physics/layer_4="tourist_hint"
 2d_physics/layer_8="clickable"
 
 [rendering]

@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/mockup.png" type="Texture" id=1]
-[ext_resource path="res://entities/deck.gd" type="Script" id=2]
+[ext_resource path="res://entities/dock.gd" type="Script" id=2]
+
+[sub_resource type="CapsuleShape2D" id=3]
+radius = 25.8681
+height = 94.4086
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 29.8864, 87.1245 )
@@ -9,8 +13,14 @@ extents = Vector2( 29.8864, 87.1245 )
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 27.0215, 12.6243 )
 
-[node name="big_deck" type="StaticBody2D"]
+[node name="big_dock" type="StaticBody2D"]
+collision_layer = 4
+collision_mask = 0
 script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 2.7075, 76.7127 )
+shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 1.24242, 72.2195 )
@@ -21,12 +31,16 @@ region_rect = Rect2( 848.412, 39.4651, 172.199, 478.331 )
 
 [node name="path" type="Area2D" parent="."]
 position = Vector2( 2.09502, 65.6437 )
+collision_layer = 8
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="path"]
 position = Vector2( 0.544815, 12.8532 )
 shape = SubResource( 1 )
 
 [node name="end" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="end"]
 position = Vector2( -5.72816, -16.9261 )
@@ -37,3 +51,9 @@ position = Vector2( -56.88, 98.7916 )
 
 [node name="anchor_right" type="Position2D" parent="."]
 position = Vector2( 59.8737, 101.187 )
+
+[node name="spawner" type="Position2D" parent="."]
+position = Vector2( -0.902512, 99.2753 )
+
+[node name="target" type="Position2D" parent="."]
+position = Vector2( 0, -44.2226 )

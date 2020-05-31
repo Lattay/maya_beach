@@ -21,5 +21,5 @@ I have to think about how the boat arrives, how long should be the visit and how
 ## Day 2
 
 Did had enough time today either unfortunatly.
-I tried to design the boat and deck mecanisms, hopefully I can get at least that to work tommorow.
+I tried to design the boat and dock mecanisms, hopefully I can get at least that to work tommorow.
 I should also start working on the tourist IA.

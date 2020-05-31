@@ -1,33 +1,38 @@
 extends Node2D
 
-enum DeckSize { BIG, SMALL }
+enum DockSize { BIG, SMALL }
 
-export(DeckSize) var deck_size = DeckSize.SMALL
+export(DockSize) var dock_size = DockSize.SMALL
 var is_free: Array = []
 var anchors = []
 
 func _ready():
-    if deck_size == DeckSize.SMALL:
+    if dock_size == DockSize.SMALL:
         is_free = [true]
         anchors = [$anchor]
     else:
         is_free = [true, true]
         anchors = [$anchor_left, $anchor_right]
-        
-func set_free(i):
+
+    var i = 0
+    for anc in anchors:
+        anc.dock_index = i
+        i += 1
+
+func free_anchor(i):
     is_free[i] = true
     
-func is_free():
+func has_free_anchor():
     return is_free.find(true) != -1
 
-func get_free_anchor():
-    match deck_size:
-        DeckSize.SMALL:
+func reserve_free_anchor():
+    match dock_size:
+        DockSize.SMALL:
             if is_free:
                 return anchors[0]
             else:
                 return null
-        DeckSize.BIG:
+        DockSize.BIG:
             if is_free[0]:
                 return anchors[0]
             elif is_free[1]:
@@ -35,5 +40,5 @@ func get_free_anchor():
             else:
                 return null                
 
-func _on_clicked(event) -> void:
+func _on_clicked(_event) -> void:
     pass # Replace with function body.

@@ -6,3 +6,4 @@ enum DisembarkSide {
 }
 
 export(DisembarkSide) var disembark
+var dock_index = 0
