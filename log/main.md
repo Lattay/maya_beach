@@ -29,3 +29,9 @@ I should also start working on the tourist IA.
 Boat is docking, on a free anchor. Boat spawn is limited.
 Started to refactor input into a central click.gd script to allow drag and drop mecanisms
 People are disembarking and chilling around.
+
+## Day 4
+
+Got almost everything boat related working, I should start working on the tourists satisfaction mecanism
+with a time of visit indicator. I should also start working on the dashboard soon to get the play cycle buy boat-build dock-set visit price.
+Also the HUD should contain an indication of reservations, daily net revenue and current wealth.
