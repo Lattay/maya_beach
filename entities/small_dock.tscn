@@ -71,5 +71,6 @@ position = Vector2( 6.3175, 84.8353 )
 
 [node name="target" type="Position2D" parent="."]
 position = Vector2( -5.41504, -29.7826 )
+[connection signal="clicked" from="in_play_clickable" to="." method="_on_clicked"]
 
 [editable path="in_play_clickable"]

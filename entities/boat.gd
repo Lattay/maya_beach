@@ -3,16 +3,19 @@ extends KinematicBody2D
 const ACC = 100
 const VEL = 150
 
+# state changes
 signal go_to_dock(boat)
-signal leave_dock(boat, dock, anchor)
 signal reached_dock(boat, dock)
-signal leave_screen(boat)
 signal disembark(boat, dock, people)
-signal release_on_boat(boat)
-signal drag_to_dock(boat)
+signal leave_dock(boat, dock, anchor)
+signal leave_screen(boat)
+
+# input
+signal clicked_when_waiting_for_dock(boat)
 
 onready var timer = $Timer
 onready var gauge = $Sprite2/gauge
+onready var clickable = $in_play_clickable
 
 const Couple = preload("res://entities/couple.tscn")
 
@@ -110,19 +113,13 @@ func move_local_to(dt, pos):
     velocity = move_and_slide(velocity)
 
 func _on_clicked(event) -> void:
-    if event is InputEventMouseButton:
-        if event.pressed:
-            match state:
-                State.WAITING_FOR_SLOT:
-                    emit_signal("drag_to_dock", self)
-                _:
-                    pass
-        else:
-            match state:
-                State.DOCKED:
-                    emit_signal("release_on_boat", self)
-                _:
-                    pass
+    if event is InputEventMouseButton and event.pressed:
+        match state:
+            State.WAITING_FOR_SLOT:
+                print("yep")
+                emit_signal("clicked_when_waiting_for_dock", self)
+            _:
+                pass
 
 func _on_Timer_timeout() -> void:
     if on_board > 0:
@@ -142,3 +139,9 @@ func embark(people):
     if on_board >= capacity:
         emit_signal("leave_dock", self, attached_dock, attached_anchor)
     state = State.LEAVE
+
+func select():
+    clickable.select()
+
+func deselect():
+    clickable.deselect()

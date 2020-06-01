@@ -2,37 +2,63 @@ extends Node
 
 enum {
     NOTHING,
-    DRAGGING_BOAT_TO_DOCK,
-    DRAGGING_FLAG_TO_BOAT,
+    SENDING_BOAT_TO_DOCK,
+    SENDING_FLAG_TO_BOAT,
     DEFORESTATING,
 }
 
 var state = NOTHING
-var dragging_boat = null
-var dragging_flag = null
+var selected_boat = null
+var selected_flag = null
 
-func _on_drag_to_dock(boat):
-    if state == NOTHING:
-        print("catch boat")
-        dragging_boat = boat
-        state = DRAGGING_BOAT_TO_DOCK
+func _on_click_on_boat(boat):
+    match state:
+        NOTHING:
+            boat.select()
+            selected_boat = boat
+            state = SENDING_BOAT_TO_DOCK
+        SENDING_BOAT_TO_DOCK:
+            if boat == selected_boat:
+                selected_boat.deselect()
+                selected_boat = null
+                state = NOTHING
+            else:
+                selected_boat.deselect()
+                boat.select()
+                selected_boat = boat
+                
+        SENDING_FLAG_TO_BOAT:
+            selected_flag.deselect()
+            state = NOTHING
+            # do something with boat and flag
+        _:
+            pass
 
-func _on_drag_flag_to_boat(flag):
-    if state == NOTHING:
-        dragging_flag = flag
-        state = DRAGGING_FLAG_TO_BOAT
+func _on_click_on_flag(flag):
+    match state:
+        NOTHING:
+            selected_flag = flag
+            state = SENDING_FLAG_TO_BOAT
+            flag.select()
+        SENDING_FLAG_TO_BOAT:
+            if selected_flag == flag:
+                selected_flag.deselect()
+                selected_flag = null
+                state = NOTHING
+            else:
+                selected_flag.deselect()
+                flag.select()
+                selected_flag = flag
+                
+        _:
+            pass
 
-func _on_release_on_dock(dock):
-    if state == DRAGGING_BOAT_TO_DOCK:
-        if dock.has_free_anchor():
-            dragging_boat.go_to_dock(dock)
-        state = NOTHING
-
-func _on_release_on_boat(boat):
-    if state == DRAGGING_FLAG_TO_BOAT:
-        if boat.on_board == 0:
-            boat.attach_flag(dragging_flag)
-            dragging_boat.call_group()
-
-func _process(_dt):
-    pass
+func _on_click_on_dock(dock):
+    match state:
+        SENDING_BOAT_TO_DOCK:
+            selected_boat.deselect()
+            selected_boat.go_to_dock(dock)
+            selected_boat = null
+            state = NOTHING
+        _:
+            pass

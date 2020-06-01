@@ -76,6 +76,7 @@ func create_dock():
     if slot:
         var dock = SmallDock.instance()
         slot.add_child(dock)
+        dock.connect("clicked_when_free", click_controller, "_on_click_on_dock")
         docks += 1
     
 func upgrade_dock():
@@ -117,8 +118,7 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     boat.connect("leave_screen", self, "_on_boat_leave_screen")
     boat.connect("disembark", self, "_on_disembark")
     
-    boat.connect("drag_to_dock", click_controller, "_on_drag_to_dock")
-    boat.connect("release_on_boat", click_controller, "_on_release_on_boat")
+    boat.connect("clicked_when_waiting_for_dock", click_controller, "_on_click_on_boat")
 
 func _on_boat_go_to_dock(_boat):
     boat_driver_enter.reset()

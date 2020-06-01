@@ -1,10 +1,13 @@
 extends Node2D
 
+signal clicked_when_free(dock)
+
 enum DockSize { BIG, SMALL }
 
 export(DockSize) var dock_size = DockSize.SMALL
 var is_free: Array = []
 var anchors = []
+onready var clickable = $in_play_clickable
 
 func _ready():
     if dock_size == DockSize.SMALL:
@@ -43,5 +46,14 @@ func reserve_free_anchor():
             else:
                 return null                
 
-func _on_clicked(_event) -> void:
-    pass # Replace with function body.
+func _on_clicked(event) -> void:
+    if event is InputEventMouseButton and event.pressed:
+        if has_free_anchor():
+            print("plop")
+            emit_signal("clicked_when_free", self)
+
+func select():
+    clickable.select()
+
+func deselect():
+    clickable.deselect()
