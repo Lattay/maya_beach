@@ -1,7 +1,14 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/mockup.png" type="Texture" id=1]
-[ext_resource path="res://entities/couple.gd" type="Script" id=2]
+[ext_resource path="res://entities/tourist.gd" type="Script" id=2]
+
+[sub_resource type="CapsuleShape2D" id=5]
+radius = 6.85168
+height = 11.1284
+
+[sub_resource type="CircleShape2D" id=6]
+radius = 11.0153
 
 [sub_resource type="Animation" id=1]
 resource_name = "blue"
@@ -114,37 +121,11 @@ tracks/1/keys = {
 "values": [ Rect2( 50, 390, 60, 60 ) ]
 }
 
-[sub_resource type="CapsuleShape2D" id=5]
-radius = 6.85168
-height = 11.1284
-
-[sub_resource type="CircleShape2D" id=6]
-radius = 11.0153
-
 [node name="couple" type="KinematicBody2D"]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource( 2 )
-
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -4.41392, 1.32386 )
-scale = Vector2( 0.2, 0.2 )
-texture = ExtResource( 1 )
-region_enabled = true
-region_rect = Rect2( 170, 290, 60, 60 )
-
-[node name="Sprite2" type="Sprite" parent="."]
-position = Vector2( 7.31948, -0.734346 )
-scale = Vector2( 0.2, 0.2 )
-texture = ExtResource( 1 )
-region_enabled = true
-region_rect = Rect2( 170, 290, 60, 60 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2"]
-anims/blue = SubResource( 1 )
-anims/orange = SubResource( 2 )
-anims/red = SubResource( 3 )
-anims/sky = SubResource( 4 )
+quantity = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0.115105, -0.177769 )
@@ -157,6 +138,26 @@ collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource( 6 )
+
+[node name="player" type="AnimationPlayer" parent="."]
+anims/blue = SubResource( 1 )
+anims/orange = SubResource( 2 )
+anims/red = SubResource( 3 )
+anims/sky = SubResource( 4 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -4.41392, 1.32386 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 53.168, 288.489, 60, 60 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+position = Vector2( 7.31948, -0.734346 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 53.168, 288.489, 60, 60 )
 
 [node name="Timer" type="Timer" parent="."]
 [connection signal="area_entered" from="Area2D" to="." method="_on_Area2D_area_entered"]

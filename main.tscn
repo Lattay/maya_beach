@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://assets/beach.png" type="Texture" id=1]
 [ext_resource path="res://entities/forest_piece.tscn" type="PackedScene" id=2]
 [ext_resource path="res://entities/way_out.tscn" type="PackedScene" id=3]
 [ext_resource path="res://components/anchor.gd" type="Script" id=4]
 [ext_resource path="res://components/click.gd" type="Script" id=5]
+[ext_resource path="res://entities/flags.gd" type="Script" id=6]
 [ext_resource path="res://main.gd" type="Script" id=7]
 [ext_resource path="res://entities/boat_driver_enter.gd" type="Script" id=8]
 
@@ -107,6 +108,14 @@ __meta__ = {
 "_gizmo_extents_": 100.0
 }
 
+[node name="boat_exit" type="Position2D" parent="."]
+position = Vector2( 1234.67, 671.291 )
+rotation = 1.5708
+script = ExtResource( 4 )
+__meta__ = {
+"_gizmo_extents_": 100.0
+}
+
 [node name="swiming_tourist_driver" type="Position2D" parent="."]
 position = Vector2( 550.646, 538.681 )
 __meta__ = {
@@ -118,22 +127,22 @@ anims/swim_to_beach = SubResource( 2 )
 
 [node name="boat_container" type="Node2D" parent="."]
 
-[node name="tourist_targets" type="Node2D" parent="."]
+[node name="tourist_targets" type="Node" parent="."]
 
 [node name="t1" type="Position2D" parent="tourist_targets"]
-position = Vector2( 444.947, 309.025 )
+position = Vector2( 435.473, 319.551 )
 
 [node name="t2" type="Position2D" parent="tourist_targets"]
 position = Vector2( 351.087, 270.217 )
 
 [node name="t3" type="Position2D" parent="tourist_targets"]
-position = Vector2( 484.657, 225.092 )
+position = Vector2( 483.604, 209.302 )
 
 [node name="t4" type="Position2D" parent="tourist_targets"]
 position = Vector2( 568.59, 170.04 )
 
 [node name="t5" type="Position2D" parent="tourist_targets"]
-position = Vector2( 621.838, 229.605 )
+position = Vector2( 636.575, 216.973 )
 
 [node name="t6" type="Position2D" parent="tourist_targets"]
 position = Vector2( 664.256, 128.525 )
@@ -145,58 +154,54 @@ position = Vector2( 692.248, 52.7115 )
 position = Vector2( 724.906, 198.506 )
 
 [node name="t9" type="Position2D" parent="tourist_targets"]
-position = Vector2( 786.723, 291.814 )
+position = Vector2( 805.67, 257.077 )
 
 [node name="t10" type="Position2D" parent="tourist_targets"]
-position = Vector2( 885.863, 284.816 )
-
-[node name="t11" type="Position2D" parent="tourist_targets"]
-position = Vector2( 776.226, 234.663 )
+position = Vector2( 859.547, 299.553 )
 
 [node name="t12" type="Position2D" parent="tourist_targets"]
-position = Vector2( 698.08, 271.986 )
+position = Vector2( 730.712, 277.249 )
 
 [node name="t13" type="Position2D" parent="tourist_targets"]
-position = Vector2( 499.8, 263.822 )
+position = Vector2( 466.116, 258.559 )
 
 [node name="t14" type="Position2D" parent="tourist_targets"]
 position = Vector2( 258.364, 297.646 )
 
 [node name="docks" type="Node2D" parent="."]
-position = Vector2( 547.186, 305.666 )
 
 [node name="dock_1" type="Position2D" parent="docks"]
+position = Vector2( 536.211, 295.371 )
 
 [node name="dock_2" type="Position2D" parent="docks"]
-position = Vector2( 276.165, 68.59 )
+position = Vector2( 812.376, 363.961 )
 
 [node name="dock_3" type="Position2D" parent="docks"]
-position = Vector2( -192.153, 73.2066 )
+position = Vector2( 344.058, 368.577 )
 rotation = -0.375246
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="dock_4" type="Position2D" parent="docks"]
-position = Vector2( 149.815, 37.0025 )
+position = Vector2( 686.026, 332.373 )
 
 [node name="dock_5" type="Position2D" parent="docks"]
-position = Vector2( 410.638, 46.0275 )
+position = Vector2( 946.849, 341.398 )
 
 [node name="dock_6" type="Position2D" parent="docks"]
-position = Vector2( -300.532, 55.0526 )
+position = Vector2( 235.679, 350.423 )
 rotation = 0.18675
 
 [node name="dock_7" type="Position2D" parent="docks"]
-position = Vector2( 574.392, 27.9131 )
+position = Vector2( 1110.6, 323.284 )
 
 [node name="dock_8" type="Position2D" parent="docks"]
-position = Vector2( -473.708, 3.35834 )
+position = Vector2( 62.5031, 298.729 )
 
 [node name="tourists" type="Node2D" parent="."]
 
 [node name="forest" type="Node2D" parent="."]
-position = Vector2( 0.001, 0 )
 
 [node name="forest_piece" parent="forest" instance=ExtResource( 2 )]
 position = Vector2( 122.814, 66.9639 )
@@ -236,4 +241,8 @@ position = Vector2( 866.986, 162.016 )
 
 [node name="forest_piece14" parent="forest" instance=ExtResource( 2 )]
 position = Vector2( 1028.52, 258.978 )
+
+[node name="flags" type="Node2D" parent="."]
+position = Vector2( 1122.03, 636.83 )
+script = ExtResource( 6 )
 [connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]

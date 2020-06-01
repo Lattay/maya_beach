@@ -8,6 +8,7 @@ export(DockSize) var dock_size = DockSize.SMALL
 var is_free: Array = []
 var anchors = []
 onready var clickable = $in_play_clickable
+onready var exit = $exit
 
 func _ready():
     if dock_size == DockSize.SMALL:
@@ -21,6 +22,9 @@ func _ready():
     for anc in anchors:
         anc.dock_index = i
         i += 1
+
+func dock_out():
+    return exit
 
 func free_anchor(i):
     is_free[i] = true
@@ -49,7 +53,6 @@ func reserve_free_anchor():
 func _on_clicked(event) -> void:
     if event is InputEventMouseButton and event.pressed:
         if has_free_anchor():
-            print("plop")
             emit_signal("clicked_when_free", self)
 
 func select():

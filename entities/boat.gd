@@ -7,11 +7,13 @@ const VEL = 150
 signal go_to_dock(boat)
 signal reached_dock(boat, dock)
 signal disembark(boat, dock, people)
+signal raised_flag(boat, dock, flag)
 signal leave_dock(boat, dock, anchor)
-signal leave_screen(boat)
+signal leave_screen(boat, flag_color)
 
 # input
 signal clicked_when_waiting_for_dock(boat)
+signal clicked_when_docked(boat)
 
 onready var timer = $Timer
 onready var gauge = $Sprite2/gauge
@@ -20,22 +22,33 @@ onready var clickable = $in_play_clickable
 const Couple = preload("res://entities/couple.tscn")
 
 enum State {
-    MOVING,
     TRACKING,
     WAITING_FOR_SLOT,
+    MOVE_TO_DOCK
+    DOCKED,
+    RAISING_FLAG,
+    WAITING_FOR_PEOPLE,
     LEAVE,
-    DOCKED
 }
 var state = State.TRACKING
 
 var velocity = Vector2.ZERO
 
 var target
+var flag_color
+var way_out
 
 var attached_dock = null
 var attached_anchor = 0
 
-var docked_phase = "disembarking"
+var raised_flag
+
+enum {
+    DISEMBARKING,
+    WAITING,
+    EMBARKING
+}
+var docked_phase = DISEMBARKING
 export(int) var capacity = 10
 onready var on_board = capacity
 
@@ -46,7 +59,7 @@ func wait_for_slot():
     
 func go_to_dock(dock):
     emit_signal("go_to_dock", self)
-    state = State.MOVING
+    state = State.MOVE_TO_DOCK
     var anchor = dock.reserve_free_anchor()
     target = anchor.get_global_position()
     attached_dock = dock
@@ -58,40 +71,44 @@ func get_attached_anchor_index():
 func _ready():
     update_gauge()
 
-func _process(_dt):
-    match state:
-        State.MOVING:
-            if position.is_equal_approx(target):
+func set_flag_color(color):
+    flag_color = color
+
+func set_way_out(obj):
+    way_out = obj
+
+func _process(dt):
+    if target is Vector2 and get_global_position().is_equal_approx(target):
+        match state:
+            State.MOVE_TO_DOCK:
                 dock()
-        State.DOCKED:
-            if docked_phase == "disembarking" and on_board == 0:
-                docked_phase = "embarking"
-        State.LEAVE:
-            # FIXME
-            queue_free()
-        _:
-            pass
+            State.LEAVE:
+                emit_signal("leave_screen", self, flag_color)
+                queue_free()
+            _:
+                pass
 
 func _physics_process(dt):
     match state:
-        State.MOVING:
-            move_global_to(dt, target)
-        State.WAITING_FOR_SLOT, State.DOCKED:
+        State.WAITING_FOR_SLOT, State.DOCKED, \
+        State.WAITING_FOR_PEOPLE, State.LEAVE, \
+        State.MOVE_TO_DOCK:
             move_global_to(dt, target)
         State.TRACKING:
             move_local_to(dt, Vector2.ZERO)
             
 func dock():
     state = State.DOCKED
-    timer.start()
     target = get_global_position()
-    emit_signal("reached_dock", self, attached_dock)            
+    emit_signal("reached_dock", self, attached_dock)
+    disembark_people()
+    
 
 func move_global_to(dt, pos):
     var glob_pos = get_global_position()
     if glob_pos.is_equal_approx(pos):
         return
-    rotation -= 5 * dt * (
+    rotation -= 5 * dt * simple_angle(
         Vector2.LEFT.angle_to(Vector2.UP)
         + rotation
         - glob_pos.angle_to_point(pos)
@@ -103,7 +120,7 @@ func move_global_to(dt, pos):
 func move_local_to(dt, pos):
     if position.is_equal_approx(pos):
         return
-    rotation -= 5 * dt * (
+    rotation -= 5 * dt * simple_angle(
         Vector2.LEFT.angle_to(Vector2.UP)
         + rotation
         - position.angle_to_point(pos)
@@ -112,22 +129,40 @@ func move_local_to(dt, pos):
     velocity = velocity.move_toward(Vector2.UP.rotated(rotation) * speed, dt * ACC * 10)
     velocity = move_and_slide(velocity)
 
+func simple_angle(angle):
+    while angle > PI:
+        angle -= 2 * PI
+    while angle < -PI:
+        angle += 2 * PI
+    return angle
+
 func _on_clicked(event) -> void:
     if event is InputEventMouseButton and event.pressed:
         match state:
             State.WAITING_FOR_SLOT:
-                print("yep")
                 emit_signal("clicked_when_waiting_for_dock", self)
+            State.DOCKED:
+                if on_board == 0:
+                    emit_signal("clicked_when_docked", self)
             _:
                 pass
 
 func _on_Timer_timeout() -> void:
-    if on_board > 0:
+    disembark_people()
+
+func disembark_people():
+    if docked_phase == DISEMBARKING and on_board > 0:
         var people = Couple.instance()
-        on_board -= 2
+        on_board -= people.quantity
         update_gauge()
         emit_signal("disembark", self, attached_dock, people)
-        timer.start()
+        
+        if on_board > 0:
+            timer.start()
+        else:
+            timer.stop()
+            docked_phase = WAITING
+        
 
 func update_gauge():
     gauge.set_current_animation("gauge")
@@ -136,12 +171,28 @@ func update_gauge():
 func embark(people):
     on_board += people.quantity
     people.queue_free()
+    update_gauge()
     if on_board >= capacity:
-        emit_signal("leave_dock", self, attached_dock, attached_anchor)
-    state = State.LEAVE
+        leave()
 
 func select():
     clickable.select()
 
 func deselect():
     clickable.deselect()
+
+func raise_flag(flag):
+    add_child(flag)
+    flag_color = flag.flag_color
+    var target = Vector2(15, -30)
+    flag.position = target
+    flag.scale *= 0.7
+    state = State.WAITING_FOR_PEOPLE
+    docked_phase = EMBARKING
+    raised_flag = flag
+    emit_signal("raised_flag", self, attached_dock, flag_color)
+
+func leave():
+    emit_signal("leave_dock", self, attached_dock, attached_anchor)
+    state = State.LEAVE
+    target = way_out.get_global_position()

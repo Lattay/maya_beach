@@ -10,7 +10,7 @@ radius = 25.2851
 height = 80.1025
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 29.7851, 74.7641 )
+extents = Vector2( 25.0891, 60.7896 )
 
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 14.4616, 55.2299 )
@@ -41,7 +41,8 @@ position = Vector2( 4.38908, 40.9648 )
 shape = SubResource( 2 )
 
 [node name="Sprite" parent="in_play_clickable" index="1"]
-position = Vector2( 2.38393, 49.3815 )
+position = Vector2( 4.18893, 42.6127 )
+scale = Vector2( 0.348949, 0.687203 )
 
 [node name="path" type="Area2D" parent="."]
 position = Vector2( 2.09502, 65.6437 )
@@ -64,6 +65,10 @@ shape = SubResource( 4 )
 
 [node name="anchor" type="Position2D" parent="."]
 position = Vector2( 4.19119, 126.334 )
+script = ExtResource( 3 )
+
+[node name="exit" type="Position2D" parent="."]
+position = Vector2( 51.1213, 188.607 )
 script = ExtResource( 3 )
 
 [node name="spawner" type="Position2D" parent="."]

@@ -7,11 +7,13 @@ enum {
     DEFORESTATING,
 }
 
+onready var flag_container = $"../flags"
+
 var state = NOTHING
 var selected_boat = null
 var selected_flag = null
 
-func _on_click_on_boat(boat):
+func _on_click_on_waiting_boat(boat):
     match state:
         NOTHING:
             boat.select()
@@ -26,11 +28,18 @@ func _on_click_on_boat(boat):
                 selected_boat.deselect()
                 boat.select()
                 selected_boat = boat
-                
+
+        _:
+            pass
+
+func _on_click_on_docked_boat(boat):
+    match state:
         SENDING_FLAG_TO_BOAT:
             selected_flag.deselect()
             state = NOTHING
-            # do something with boat and flag
+            flag_container.drop_flag(selected_flag)
+            boat.raise_flag(selected_flag)
+            selected_flag = null
         _:
             pass
 
@@ -49,7 +58,6 @@ func _on_click_on_flag(flag):
                 selected_flag.deselect()
                 flag.select()
                 selected_flag = flag
-                
         _:
             pass
 
