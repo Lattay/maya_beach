@@ -70,6 +70,7 @@ tracks/1/keys = {
 [node name="main" type="Node2D"]
 script = ExtResource( 7 )
 boats = 2
+people_waiting = 15
 
 [node name="click" type="Node" parent="."]
 script = ExtResource( 5 )
@@ -100,14 +101,6 @@ __meta__ = {
 [node name="AnimationPlayer" type="AnimationPlayer" parent="boat_driver_enter"]
 anims/enter = SubResource( 1 )
 
-[node name="sea_anchor" type="Position2D" parent="."]
-position = Vector2( 549.686, 588.621 )
-rotation = 1.5708
-script = ExtResource( 4 )
-__meta__ = {
-"_gizmo_extents_": 100.0
-}
-
 [node name="boat_exit" type="Position2D" parent="."]
 position = Vector2( 1234.67, 671.291 )
 rotation = 1.5708
@@ -124,6 +117,15 @@ __meta__ = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="swiming_tourist_driver"]
 anims/swim_to_beach = SubResource( 2 )
+
+[node name="sea_anchor" type="Position2D" parent="."]
+position = Vector2( 549.686, 588.621 )
+rotation = 1.5708
+scale = Vector2( 1, 1 )
+script = ExtResource( 4 )
+__meta__ = {
+"_gizmo_extents_": 100.0
+}
 
 [node name="boat_container" type="Node2D" parent="."]
 

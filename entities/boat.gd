@@ -42,6 +42,7 @@ var attached_dock = null
 var attached_anchor = 0
 
 var raised_flag
+var group_score
 
 enum {
     DISEMBARKING,
@@ -73,6 +74,9 @@ func _ready():
 
 func set_flag_color(color):
     flag_color = color
+    
+func set_score(score):
+    group_score = score
 
 func set_way_out(obj):
     way_out = obj
@@ -193,6 +197,6 @@ func raise_flag(flag):
     emit_signal("raised_flag", self, attached_dock, flag_color)
 
 func leave():
-    emit_signal("leave_dock", self, attached_dock, attached_anchor)
+    emit_signal("leave_dock", self, attached_dock, attached_anchor, group_score)
     state = State.LEAVE
     target = way_out.get_global_position()

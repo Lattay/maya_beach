@@ -20,8 +20,12 @@ func _process(dt):
             flag.position += 4 * delta * dt
         else:
             flag.position = target
+            if not flag.has_gauge:
+                flag.add_gauge()
         i += 1
 
 func drop_flag(flag):
     flags.erase(flag)
+    var score = flag.drop_gauge()
     remove_child(flag)
+    return score

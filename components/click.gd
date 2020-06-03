@@ -37,7 +37,8 @@ func _on_click_on_docked_boat(boat):
         SENDING_FLAG_TO_BOAT:
             selected_flag.deselect()
             state = NOTHING
-            flag_container.drop_flag(selected_flag)
+            var score = flag_container.drop_flag(selected_flag)
+            boat.set_score(score)
             boat.raise_flag(selected_flag)
             selected_flag = null
         _:

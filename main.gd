@@ -1,5 +1,7 @@
 extends Node2D
 
+const GROUP_SCORE_FACTOR = 1
+
 const Dock = preload("res://entities/dock.gd")
 const SmallDock = preload("res://entities/small_dock.tscn")
 const BigDock = preload("res://entities/big_dock.tscn")
@@ -39,7 +41,7 @@ var side_earning
 var satisfaction = 0
 var trash = 0
 var hype = 1
-var people_waiting = 8
+export var people_waiting = 8
 onready var free_boat = boats
 
 var flag_colors = {
@@ -141,7 +143,8 @@ func _on_boat_reached_dock(boat, _dock):
     var new_flag = flag_container.spawn_flag(boat.get_global_position(), flag_color)
     new_flag.connect("clicked", click_controller, "_on_click_on_flag")
 
-func _on_boat_leave_dock(_boat, dock, anchor):
+func _on_boat_leave_dock(_boat, dock, anchor, group_score):
+    satisfaction += GROUP_SCORE_FACTOR * (group_score - 0.5)
     dock.free_anchor(anchor)
 
 func _on_boat_leave_screen(boat, flag_color):
