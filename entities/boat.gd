@@ -9,7 +9,7 @@ signal reached_dock(boat, dock)
 signal disembark(boat, dock, people)
 signal raised_flag(boat, dock, flag)
 signal leave_dock(boat, dock, anchor)
-signal leave_screen(boat, flag_color)
+signal leave_screen(boat)
 
 # input
 signal clicked_when_waiting_for_dock(boat)
@@ -81,14 +81,13 @@ func set_score(score):
 func set_way_out(obj):
     way_out = obj
 
-func _process(dt):
-    if target is Vector2 and get_global_position().is_equal_approx(target):
+func _process(_dt):
+    if target is Vector2 and get_global_position().distance_squared_to(target) < 30:
         match state:
             State.MOVE_TO_DOCK:
                 dock()
             State.LEAVE:
-                emit_signal("leave_screen", self, flag_color)
-                queue_free()
+                emit_signal("leave_screen", self)
             _:
                 pass
 
@@ -104,8 +103,8 @@ func _physics_process(dt):
 func dock():
     state = State.DOCKED
     target = get_global_position()
-    emit_signal("reached_dock", self, attached_dock)
     disembark_people()
+    emit_signal("reached_dock", self, attached_dock)
     
 
 func move_global_to(dt, pos):
@@ -188,8 +187,7 @@ func deselect():
 func raise_flag(flag):
     add_child(flag)
     flag_color = flag.flag_color
-    var target = Vector2(15, -30)
-    flag.position = target
+    flag.position = Vector2(15, -30)
     flag.scale *= 0.7
     state = State.WAITING_FOR_PEOPLE
     docked_phase = EMBARKING

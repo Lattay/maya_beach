@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/beach.png" type="Texture" id=1]
 [ext_resource path="res://entities/forest_piece.tscn" type="PackedScene" id=2]
@@ -67,10 +67,40 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 2 )
 }
 
+[sub_resource type="Animation" id=3]
+resource_name = "daynight"
+length = 60.0
+loop = true
+step = 15.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 15, 30, 45, 60 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0.901961, 0.784314, 1 ), Color( 0.901961, 0.901961, 0.901961, 1 ), Color( 0.407843, 0.482353, 0.882353, 1 ), Color( 0.698039, 0.737255, 0.941176, 1 ), Color( 0.698039, 0.737255, 0.941176, 1 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 45 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "day_review"
+} ]
+}
+
 [node name="main" type="Node2D"]
 script = ExtResource( 7 )
-boats = 2
-people_waiting = 15
 
 [node name="click" type="Node" parent="."]
 script = ExtResource( 5 )
@@ -121,7 +151,6 @@ anims/swim_to_beach = SubResource( 2 )
 [node name="sea_anchor" type="Position2D" parent="."]
 position = Vector2( 549.686, 588.621 )
 rotation = 1.5708
-scale = Vector2( 1, 1 )
 script = ExtResource( 4 )
 __meta__ = {
 "_gizmo_extents_": 100.0
@@ -181,9 +210,6 @@ position = Vector2( 812.376, 363.961 )
 [node name="dock_3" type="Position2D" parent="docks"]
 position = Vector2( 344.058, 368.577 )
 rotation = -0.375246
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="dock_4" type="Position2D" parent="docks"]
 position = Vector2( 686.026, 332.373 )
@@ -247,4 +273,11 @@ position = Vector2( 1028.52, 258.978 )
 [node name="flags" type="Node2D" parent="."]
 position = Vector2( 1122.03, 636.83 )
 script = ExtResource( 6 )
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color( 0.698039, 0.737255, 0.941176, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasModulate"]
+autoplay = "daynight"
+anims/daynight = SubResource( 3 )
 [connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]

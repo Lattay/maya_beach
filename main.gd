@@ -1,13 +1,9 @@
 extends Node2D
 
-const GROUP_SCORE_FACTOR = 1
-
 const Dock = preload("res://entities/dock.gd")
 const SmallDock = preload("res://entities/small_dock.tscn")
 const BigDock = preload("res://entities/big_dock.tscn")
 const Boat = preload("res://entities/boat.tscn")
-
-const FAC = 0.01
 
 var rng = RandomNumberGenerator.new()
 
@@ -23,63 +19,90 @@ onready var sea_anchor = $sea_anchor
 onready var click_controller = $click
 onready var boat_exit = $boat_exit
 
-# Parameters
-var capacity  # capacity of the beach in number of people
-var forest  # number of forest pieces left
-var docks = 0  # number of anchor available
-export(int) var boats = 1 # number of boat availables
-
-# Real time variables
-var popularity = 2  # 
-var advise = 0
-var eco_angst = 0
-var bad_buzz = 0
-var earning
-var visit_per_day
-var visit_cost
-var side_earning
-var satisfaction = 0
-var trash = 0
-var hype = 1
-export var people_waiting = 8
-onready var free_boat = boats
+# constant
 
 var flag_colors = {
     "blue": true,
     "orange": true
    }
 
+export var group_score_factor = 1
+export var visit_factor = 10
+export var hype_factor = 4
+export var hype_decrease = 0.5
+export var satisfaction_factor = 10
+export var clean_beach_capacity = 200
+
+# strategic parameters
+export var visit_cost = 10
+var capacity # capacity of the beach in number of people
+var forest  # number of forest pieces left
+var docks = 0  # number of anchor available
+export(int) var boats = 1 # number of boat availables
+
+# longrun variables
+var popularity = 2
+var eco_angst = 0
+var total_earning
+var trash = 0
+var hype = 1
+
+# daily variables
+var satisfaction = 0
+var side_earning = 0
+export var visit_today = 30
+onready var people_waiting = visit_today
+
+# other variables
+onready var free_boat = boats
+onready var last_use
+onready var people_on_ground = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-    update_vars()
+    last_use = Array()
+    for c in target_containers.get_children():
+        last_use.append(0.0)
+    rng.randomize()
+    update_forest()
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-    people_waiting += delta * (popularity + hype) * FAC
-        
-    visit_per_day = 10
-    visit_cost = 1
+func day_review():
+    # update longrun variables
+    total_earning = (visit_today - people_waiting) * visit_cost + side_earning
+    
+    satisfaction -= 0.5 * people_waiting
+    
+    eco_angst += (docks + trash - (forest - 10))
+    popularity += satisfaction_factor * satisfaction / visit_cost
+    
+    hype *= hype_decrease
+    
+    print("total earning ", total_earning)
+    print("satisfaction ", satisfaction)
+    print("popularity ", popularity)
+    # reset daily variables
+    visit_today = (popularity - eco_angst + hype_factor * hype) * visit_factor
+    people_waiting = visit_today
+    satisfaction = 0
     side_earning = 0
     
-    eco_angst += (docks + trash - (forest - 10)) * delta
-    popularity += (advise - eco_angst - bad_buzz + satisfaction) * delta
-    earning = visit_per_day * visit_cost + side_earning
     
-    hype *= 0.9
-
-    print(people_waiting)
-    
-    if people_waiting >= 10 and free_boat  > 0:
+func _process(_delta):
+    if (
+        people_waiting >= 10
+        and free_boat  > 0
+        and people_on_ground < capacity
+        and boat_driver_enter.is_free
+    ):
         people_waiting -= 10
         boat_arrive()
     
     if Input.is_action_just_pressed("create_dock"):
         create_dock()
 
-func update_vars():
+func update_forest():
     forest = forest_container.get_child_count()
-    capacity = 200 - 12 * forest
+    capacity = clean_beach_capacity - 12 * forest
 
 func create_dock():
     var slot = available_dock_slot()
@@ -122,8 +145,11 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     boat_container.add_child(boat)
     boat.set_global_position(pos)
     boat.set_global_rotation(rot)
+    var flag_color = get_available_color()
+    boat.set_flag_color(flag_color)
+    var new_flag = flag_container.spawn_flag(boat.get_global_position(), flag_color)
+    new_flag.connect("clicked", click_controller, "_on_click_on_flag")
     boat.wait_for_slot()
-    boat.set_flag_color(get_available_color())
     boat.set_way_out(boat_exit)
     boat.connect("go_to_dock", self, "_on_boat_go_to_dock")
     boat.connect("reached_dock", self, "_on_boat_reached_dock")
@@ -138,18 +164,19 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
 func _on_boat_go_to_dock(_boat):
     boat_driver_enter.reset()
 
-func _on_boat_reached_dock(boat, _dock):
-    var flag_color = boat.flag_color
-    var new_flag = flag_container.spawn_flag(boat.get_global_position(), flag_color)
-    new_flag.connect("clicked", click_controller, "_on_click_on_flag")
+func _on_boat_reached_dock(_boat, _dock):
+    people_on_ground += 10
 
 func _on_boat_leave_dock(_boat, dock, anchor, group_score):
-    satisfaction += GROUP_SCORE_FACTOR * (group_score - 0.5)
+    satisfaction += group_score_factor * (group_score - 0.5)
+    print(group_score)
+    people_on_ground -= 10
     dock.free_anchor(anchor)
 
-func _on_boat_leave_screen(boat, flag_color):
+func _on_boat_leave_screen(boat):
     free_boat += 1
-    flag_colors[flag_color] = true
+    flag_colors[boat.flag_color] = true
+    boat.queue_free()
     
 func _on_disembark(boat, dock, people):
     var target = dock.get_node("target")
@@ -173,10 +200,13 @@ func get_free_dock():
 
 func _on_ask_for_target(people, prev_target):
     var target_n = target_containers.get_child_count()
-    var target = target_containers.get_child(rng.randi_range(0, target_n-1)).get_global_position()
-    while target.distance_to(prev_target) < 200:
-        target = target_containers.get_child(rng.randi_range(0, target_n-1)).get_global_position()
-    
+    var index = rng.randi_range(0, target_n-1)
+    var target = target_containers.get_child(index).get_global_position()
+    var now = OS.get_system_time_msecs()
+    while target.distance_to(prev_target) < 100 or now - last_use[index] < 0.2:
+        index = rng.randi_range(0, target_n-1)
+        target = target_containers.get_child(index).get_global_position()
+    last_use[index] = now
     people.set_target(target)
 
 func get_available_color():

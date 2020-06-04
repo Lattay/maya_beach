@@ -1,6 +1,6 @@
 extends Sprite
 
-const Gauge = preload("res://components/gauge.tscn")
+const Gauge = preload("res://entities/gauge.tscn")
 
 signal clicked(flag)
 

@@ -12,3 +12,4 @@ func start(boat):
 func reset():
     tracked_boat = null
     player.seek(0, true)
+    is_free = true

@@ -54,6 +54,7 @@ position = Vector2( 1.84464, 0.790561 )
 scale = Vector2( 0.210671, 0.340803 )
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
 
 [node name="Sprite2" type="Sprite" parent="."]
 position = Vector2( 1.90262, 1.18913 )

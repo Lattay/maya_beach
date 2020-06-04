@@ -1,7 +1,10 @@
 extends KinematicBody2D
 
-const VEL = 50
-const ACC = 100
+export(int) var speed = 200
+export(int) var accel = 300
+export(int) var concentration_min = 1
+export(int) var concentration_max = 3
+export(float, 0, 1) var angular_momentum = 0.5
 export(int, 1, 3) var quantity = 1
 
 signal ask_for_target(people, prev_target)
@@ -41,10 +44,10 @@ func _physics_process(delta: float) -> void:
     match state:
         State.LEAVE_DOCK, State.GO_TO, State.GO_BACK_TO_DOCK:
             velocity = velocity.move_toward(
-                VEL * (target - get_global_position()).normalized(),
-                delta * ACC
+                speed * (target - get_global_position()).normalized(),
+                delta * accel
             )
-            rotation = 0.7 * rotation + 0.3 * Vector2.UP.angle_to(velocity)
+            rotation = angular_momentum * rotation + (1 - angular_momentum) * Vector2.UP.angle_to(velocity)
             velocity = move_and_slide(velocity)
         _:
             pass
@@ -72,7 +75,7 @@ func ask_target():
 
 func set_target(new_target):
     if state == State.GO_TO or state == State.IDLE:
-        timer.set_wait_time(rng.randf_range(4, 15))
+        timer.set_wait_time(rng.randf_range(concentration_min, concentration_max))
         timer.start()
         state = State.GO_TO
         target = new_target
