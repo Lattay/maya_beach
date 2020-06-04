@@ -1,7 +1,8 @@
 extends KinematicBody2D
 
-const ACC = 100
-const VEL = 150
+export var max_speed = 200
+export var rot_gain = 5
+export var accel = 100
 
 # state changes
 signal go_to_dock(boat)
@@ -18,6 +19,7 @@ signal clicked_when_docked(boat)
 onready var timer = $Timer
 onready var gauge = $Sprite2/gauge
 onready var clickable = $in_play_clickable
+
 
 const Couple = preload("res://entities/couple.tscn")
 
@@ -111,13 +113,23 @@ func move_global_to(dt, pos):
     var glob_pos = get_global_position()
     if glob_pos.is_equal_approx(pos):
         return
-    rotation -= 5 * dt * simple_angle(
-        Vector2.LEFT.angle_to(Vector2.UP)
-        + rotation
-        - glob_pos.angle_to_point(pos)
-    )
-    var speed = min(VEL, 4 * glob_pos.distance_to(pos))
-    velocity = velocity.move_toward(Vector2.UP.rotated(rotation) * speed, dt * ACC * 10)
+        
+    var speed
+    if state == State.LEAVE:
+        speed = 3 * max_speed
+        rotation -= 3 * rot_gain * dt * simple_angle(
+            Vector2.LEFT.angle_to(Vector2.UP)
+            + rotation
+            - glob_pos.angle_to_point(pos)
+        )
+    else:
+        rotation -= rot_gain * dt * simple_angle(
+            Vector2.LEFT.angle_to(Vector2.UP)
+            + rotation
+            - glob_pos.angle_to_point(pos)
+        )
+        speed = min(max_speed, 4 * glob_pos.distance_to(pos))
+    velocity = velocity.move_toward(Vector2.UP.rotated(rotation) * speed, dt * accel * 10)
     velocity = move_and_slide(velocity)
 
 func move_local_to(dt, pos):
@@ -128,8 +140,8 @@ func move_local_to(dt, pos):
         + rotation
         - position.angle_to_point(pos)
     )
-    var speed = min(VEL, position.distance_to(pos))
-    velocity = velocity.move_toward(Vector2.UP.rotated(rotation) * speed, dt * ACC * 10)
+    var speed = min(max_speed, position.distance_to(pos))
+    velocity = velocity.move_toward(Vector2.UP.rotated(rotation) * speed, dt * accel * 10)
     velocity = move_and_slide(velocity)
 
 func simple_angle(angle):

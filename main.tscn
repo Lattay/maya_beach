@@ -71,7 +71,7 @@ tracks/1/keys = {
 resource_name = "daynight"
 length = 60.0
 loop = true
-step = 15.0
+step = 1.0
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:color")
 tracks/0/interp = 1
@@ -79,10 +79,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 15, 30, 45, 60 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 25, 32, 42, 45, 60 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Color( 1, 0.901961, 0.784314, 1 ), Color( 0.901961, 0.901961, 0.901961, 1 ), Color( 0.407843, 0.482353, 0.882353, 1 ), Color( 0.698039, 0.737255, 0.941176, 1 ), Color( 0.698039, 0.737255, 0.941176, 1 ) ]
+"values": [ Color( 1, 0.901961, 0.784314, 1 ), Color( 0.901961, 0.901961, 0.901961, 1 ), Color( 0.407843, 0.482353, 0.882353, 1 ), Color( 0.407843, 0.482353, 0.882353, 1 ), Color( 0.698039, 0.737255, 0.941176, 1 ), Color( 1, 0.901961, 0.784314, 1 ) ]
 }
 tracks/1/type = "method"
 tracks/1/path = NodePath("..")
@@ -275,7 +275,7 @@ position = Vector2( 1122.03, 636.83 )
 script = ExtResource( 6 )
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color( 0.698039, 0.737255, 0.941176, 1 )
+color = Color( 1, 0.901961, 0.784314, 1 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasModulate"]
 autoplay = "daynight"
