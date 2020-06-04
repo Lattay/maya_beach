@@ -35,3 +35,7 @@ People are disembarking and chilling around.
 Got almost everything boat related working, I should start working on the tourists satisfaction mecanism
 with a time of visit indicator. I should also start working on the dashboard soon to get the play cycle buy boat-build dock-set visit price.
 Also the HUD should contain an indication of reservations, daily net revenue and current wealth.
+
+## Day 5 and 6
+I set up a time indicator that allow me to hint the player about the satisfaction of the tourists.
+I also decided to use a daily update system for income, popularity, reservations etc, using a day-night cycle animation for the player to keep track.
