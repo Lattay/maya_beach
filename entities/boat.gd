@@ -151,16 +151,15 @@ func simple_angle(angle):
         angle += 2 * PI
     return angle
 
-func _on_clicked(event) -> void:
-    if event is InputEventMouseButton and event.pressed:
-        match state:
-            State.WAITING_FOR_SLOT:
-                emit_signal("clicked_when_waiting_for_dock", self)
-            State.DOCKED:
-                if on_board == 0:
-                    emit_signal("clicked_when_docked", self)
-            _:
-                pass
+func _on_clicked(_event) -> void:
+    match state:
+        State.WAITING_FOR_SLOT:
+            emit_signal("clicked_when_waiting_for_dock", self)
+        State.DOCKED:
+            if on_board == 0:
+                emit_signal("clicked_when_docked", self)
+        _:
+            pass
 
 func _on_Timer_timeout() -> void:
     disembark_people()

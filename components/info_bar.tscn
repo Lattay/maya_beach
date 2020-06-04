@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/label_background.png" type="Texture" id=1]
+
+[node name="bar" type="NinePatchRect"]
+margin_right = 200.0
+margin_bottom = 40.0
+texture = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="box" type="HBoxContainer" parent="."]
+margin_left = 54.0
+margin_right = 142.0
+margin_bottom = 40.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="name" type="Label" parent="box"]
+margin_top = 13.0
+margin_right = 68.0
+margin_bottom = 27.0
+text = "Popularity:"
+
+[node name="value" type="Label" parent="box"]
+margin_left = 72.0
+margin_top = 13.0
+margin_right = 88.0
+margin_bottom = 27.0
+text = "35"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}

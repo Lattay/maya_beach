@@ -50,10 +50,9 @@ func reserve_free_anchor():
             else:
                 return null                
 
-func _on_clicked(event) -> void:
-    if event is InputEventMouseButton and event.pressed:
-        if has_free_anchor():
-            emit_signal("clicked_when_free", self)
+func _on_clicked(_event) -> void:
+    if has_free_anchor():
+        emit_signal("clicked_when_free", self)
 
 func select():
     clickable.select()

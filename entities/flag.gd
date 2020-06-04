@@ -15,7 +15,7 @@ func set_color(color):
     flag_color = color
 
 func _on_clicked(event) -> void:
-    if event is InputEventMouseButton and event.pressed:
+    if has_gauge:
         emit_signal("clicked", self)
 
 func select():

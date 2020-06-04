@@ -1,0 +1,57 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/menu_background.png" type="Texture" id=1]
+[ext_resource path="res://components/in_play_clickable.tscn" type="PackedScene" id=2]
+[ext_resource path="res://menu.gd" type="Script" id=3]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 181.478, 43.9847 )
+
+[node name="menu" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="play_button" parent="." instance=ExtResource( 2 )]
+position = Vector2( 595.93, 301.089 )
+show_hover = true
+
+[node name="CollisionShape2D" parent="play_button" index="0"]
+shape = SubResource( 1 )
+
+[node name="Sprite" parent="play_button" index="1"]
+position = Vector2( -14.4489, 2.16734 )
+scale = Vector2( 1.55387, 0.559458 )
+
+[node name="about_button" parent="." instance=ExtResource( 2 )]
+position = Vector2( 599.132, 403.552 )
+show_hover = true
+
+[node name="CollisionShape2D" parent="about_button" index="0"]
+shape = SubResource( 1 )
+
+[node name="Sprite" parent="about_button" index="1"]
+position = Vector2( -14.4489, 2.16734 )
+scale = Vector2( 1.55387, 0.559458 )
+
+[node name="exit_button" parent="." instance=ExtResource( 2 )]
+position = Vector2( 596.997, 508.15 )
+show_hover = true
+
+[node name="CollisionShape2D" parent="exit_button" index="0"]
+shape = SubResource( 1 )
+
+[node name="Sprite" parent="exit_button" index="1"]
+position = Vector2( -14.4489, 2.16734 )
+scale = Vector2( 1.55387, 0.559458 )
+[connection signal="clicked" from="play_button" to="." method="_on_play_button_clicked"]
+[connection signal="clicked" from="about_button" to="." method="_on_about_button_clicked"]
+[connection signal="clicked" from="exit_button" to="." method="_on_exit_button_clicked"]
+
+[editable path="play_button"]
+
+[editable path="about_button"]
+
+[editable path="exit_button"]
