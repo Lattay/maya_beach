@@ -11,11 +11,10 @@ script = ExtResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 
 [node name="Sprite" type="Sprite" parent="."]
-visible = false
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 1 )
 region_enabled = true
-region_rect = Rect2( 709.116, 531.772, 295.613, 310.033 )
+region_rect = Rect2( 709.116, 556.892, 295.613, 258.658 )
 [connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

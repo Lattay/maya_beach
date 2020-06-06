@@ -18,6 +18,7 @@ onready var boat_driver_enter = $boat_driver_enter
 onready var sea_anchor = $sea_anchor
 onready var click_controller = $click
 onready var boat_exit = $boat_exit
+onready var hud = $hud
 
 # constant
 
@@ -46,12 +47,13 @@ var eco_angst = 0
 var total_earning
 var trash = 0
 var hype = 1
+var wealth = 0
 
 # daily variables
 var satisfaction = 0
-var side_earning = 0
 export var visit_today = 30
 onready var people_waiting = visit_today
+var profit = 0
 
 # other variables
 onready var free_boat = boats
@@ -68,12 +70,12 @@ func _ready():
 
 func day_review():
     # update longrun variables
-    total_earning = (visit_today - people_waiting) * visit_cost + side_earning
     
     satisfaction -= 0.5 * people_waiting
     
     eco_angst += (docks + trash - (forest - 10))
     popularity += satisfaction_factor * satisfaction / visit_cost
+    wealth += profit
     
     hype *= hype_decrease
     
@@ -84,7 +86,7 @@ func day_review():
     visit_today = (popularity - eco_angst + hype_factor * hype) * visit_factor
     people_waiting = visit_today
     satisfaction = 0
-    side_earning = 0
+    profit = 0
     
     
 func _process(_delta):
@@ -95,10 +97,13 @@ func _process(_delta):
         and boat_driver_enter.is_free
     ):
         people_waiting -= 10
+        profit += visit_cost * 10
         boat_arrive()
     
     if Input.is_action_just_pressed("create_dock"):
         create_dock()
+        
+    hud.update_values(profit, people_waiting, wealth, eco_angst, popularity)
 
 func update_forest():
     forest = forest_container.get_child_count()

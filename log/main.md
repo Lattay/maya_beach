@@ -39,3 +39,4 @@ Also the HUD should contain an indication of reservations, daily net revenue and
 ## Day 5 and 6
 I set up a time indicator that allow me to hint the player about the satisfaction of the tourists.
 I also decided to use a daily update system for income, popularity, reservations etc, using a day-night cycle animation for the player to keep track.
+Tonight I don't feel like working on the gameplay or features so I created a menu scene and a boss sprite.
