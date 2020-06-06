@@ -40,3 +40,11 @@ Also the HUD should contain an indication of reservations, daily net revenue and
 I set up a time indicator that allow me to hint the player about the satisfaction of the tourists.
 I also decided to use a daily update system for income, popularity, reservations etc, using a day-night cycle animation for the player to keep track.
 Tonight I don't feel like working on the gameplay or features so I created a menu scene and a boss sprite.
+
+## Day 7 and 8 (June 7)
+Anyway yesterday I created a HUD for the important parameters and today I created a "shop" or dahsboard screen where you can buy boats, new docks etc.
+I struggled making the dashboard working in pause mode because Aread2D based mouse buttons does not work in pause mode, but Control based buttons does not
+work on my moving boat. In the end I simply use each for the suitable case but it was a pain in the ass to reconfigure all my interactions twice.
+Also thanks to git and Vim it wasn't that bad.
+
+I think most important mecanisms are in place, I still really need to balance everything but that may be fun to play.
