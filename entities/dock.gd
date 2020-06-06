@@ -23,6 +23,9 @@ func _ready():
         anc.dock_index = i
         i += 1
 
+func is_small():
+    return dock_size == DockSize.SMALL
+
 func dock_out():
     return exit
 

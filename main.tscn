@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://assets/beach.png" type="Texture" id=1]
 [ext_resource path="res://entities/forest_piece.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://entities/boat_driver_enter.gd" type="Script" id=8]
 [ext_resource path="res://components/pause.tscn" type="PackedScene" id=9]
 [ext_resource path="res://entities/hud.tscn" type="PackedScene" id=10]
+[ext_resource path="res://entities/dash_board.tscn" type="PackedScene" id=11]
 
 [sub_resource type="Animation" id=1]
 resource_name = "enter"
@@ -280,17 +281,22 @@ position = Vector2( 1122.03, 636.83 )
 script = ExtResource( 6 )
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color( 0.410882, 0.479216, 1, 1 )
+color = Color( 1, 0.901961, 0.784314, 1 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasModulate"]
 autoplay = "daynight"
 anims/daynight = SubResource( 3 )
 
-[node name="pause" parent="." instance=ExtResource( 9 )]
-
 [node name="hud" parent="." instance=ExtResource( 10 )]
 light_mask = 2
 material = SubResource( 4 )
-[connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]
 
-[editable path="hud"]
+[node name="pause" parent="." instance=ExtResource( 9 )]
+
+[node name="dash_board" parent="pause" instance=ExtResource( 11 )]
+pause_mode = 2
+[connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]
+[connection signal="close" from="pause/dash_board" to="." method="_on_dash_board_close"]
+[connection signal="close" from="pause/dash_board" to="pause" method="_on_dash_board_close"]
+
+[editable path="pause/dash_board"]

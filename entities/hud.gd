@@ -7,9 +7,8 @@ onready var anger_label = $ecoanger/value
 onready var popularity_label = $popularity/value
 
 func update_values(profit, booking, wealth, anger, popularity):
-    profit_label.text = str(profit)
-    booking_label.text = str(booking)
-    wealth_label.text = str(wealth)
-    anger_label.text = str(anger)
-    popularity_label.text = str(popularity)
-    
+    profit_label.update_value(profit)
+    booking_label.update_value(booking)
+    wealth_label.update_value(wealth)
+    anger_label.update_value(anger)
+    popularity_label.update_value(popularity)

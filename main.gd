@@ -19,6 +19,8 @@ onready var sea_anchor = $sea_anchor
 onready var click_controller = $click
 onready var boat_exit = $boat_exit
 onready var hud = $hud
+onready var pause_controller = $pause
+onready var dash_board = $pause/dash_board
 
 # constant
 
@@ -33,21 +35,32 @@ export var hype_factor = 4
 export var hype_decrease = 0.5
 export var satisfaction_factor = 10
 export var clean_beach_capacity = 200
+export(int) var cheap_ticket = 10
+export(int) var mild_ticket = 50
+export(int) var expensive_ticket = 300
+enum {
+    CHEAP,
+    MILD,
+    EXPENSIVE
+}
 
 # strategic parameters
-export var visit_cost = 10
+var ticket_price = CHEAP setget set_ticket_price
+var visit_cost = 10
 var capacity # capacity of the beach in number of people
 var forest  # number of forest pieces left
 var docks = 0  # number of anchor available
 export(int) var boats = 1 # number of boat availables
 
 # longrun variables
+var day = 1
 var popularity = 2
-var eco_angst = 0
+var eco_anger = 0
 var total_earning
 var trash = 0
 var hype = 1
-var wealth = 0
+var wealth = 700
+var kids_number = 0
 
 # daily variables
 var satisfaction = 0
@@ -73,21 +86,47 @@ func day_review():
     
     satisfaction -= 0.5 * people_waiting
     
-    eco_angst += (docks + trash - (forest - 10))
+    eco_anger += (docks + trash - (forest - 10))
     popularity += satisfaction_factor * satisfaction / visit_cost
+    popularity = max(popularity, 0)  # cannot be negative
     wealth += profit
     
+    if eco_anger >= 100:
+        pass # loose if eco_anger reach 100
+    
     hype *= hype_decrease
+    
+    day += 1
     
     print("total earning ", total_earning)
     print("satisfaction ", satisfaction)
     print("popularity ", popularity)
     # reset daily variables
-    visit_today = (popularity - eco_angst + hype_factor * hype) * visit_factor
+    visit_today = 10 * int((
+        popularity  * visit_factor
+        + hype_factor * hype
+        + kids_efficiency(kids_number)
+    ) / 10)
+    visit_today = max(visit_today, 0)
     people_waiting = visit_today
     satisfaction = 0
     profit = 0
-    
+
+func set_ticket_price(val):
+    ticket_price = val
+    match val:
+        CHEAP:
+            visit_cost = cheap_ticket
+        MILD:
+            visit_cost = mild_ticket
+        EXPENSIVE:
+            visit_cost = expensive_ticket
+
+func kids_efficiency(kids):
+    if kids < 1:
+        return 0
+    else:
+        return int(18.34 * kids - 13)
     
 func _process(_delta):
     if (
@@ -102,8 +141,11 @@ func _process(_delta):
     
     if Input.is_action_just_pressed("create_dock"):
         create_dock()
+    
+    if Input.is_action_just_pressed("pause"):
+        pause()
         
-    hud.update_values(profit, people_waiting, wealth, eco_angst, popularity)
+    hud.update_values(profit, people_waiting, wealth, eco_anger, popularity)
 
 func update_forest():
     forest = forest_container.get_child_count()
@@ -127,7 +169,7 @@ func upgradable_dock():
     for slot in dock_container.get_children():
         if slot.get_child_count() != 0:
             var dock = slot.get_child(0)
-            if dock.dock_size == "small":
+            if dock.is_small():
                 return slot
 
 func available_dock_slot():
@@ -224,3 +266,51 @@ func _on_raised_flag(boat, dock, color):
     for people in tourist_container.get_children():
         if people.group_color == color:
             people.call_back(boat, dock)
+
+func count_small_docks():
+    var count = 0
+    for slot in dock_container.get_children():
+        if slot.get_child_count() != 0:
+            var dock = slot.get_child(0)
+            if dock.is_small():
+                count += 1
+    return count
+
+func pause():
+    print("pause !")
+    var small_docks = count_small_docks()
+    dash_board.init_values(day, wealth, ticket_price, boats, small_docks, docks - small_docks, capacity, forest)
+    pause_controller.pause()
+
+
+func _on_dash_board_close() -> void:
+    print("unpause !")
+    var values = dash_board.get_values()
+    # boat small_docks big_docks forest hired_kids instagram_investment corrupt_investment
+    var not_used_boats = boats - free_boat
+    boats = values[0]
+    free_boat = boats - not_used_boats
+    
+    # update docks
+    
+    while forest > values[3]:
+        cut_trees()
+    
+    kids_number += values[4]
+    
+    hype += 2 * values[5]
+    eco_anger -= 10 * values[6]
+    eco_anger = max(0, eco_anger)
+    
+    set_ticket_price(values[7])
+    
+func cut_trees():
+    var trees = null
+    var max_y = 0
+    for child in forest_container:
+        if child.position.y > max_y:
+            trees = child
+            max_y = child.position.y
+    if trees != null:
+        forest -= 1
+        trees.queue_free()
