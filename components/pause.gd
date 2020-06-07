@@ -5,13 +5,13 @@ var paused = false
 enum {
     SHOP,
     PAUSE,
-    END,
+    DIALOG,
 }
 
 var pause_type = PAUSE
 
 onready var dash_board = $dash_board
-onready var end_screen = $end_screen
+onready var dialog_screen = $dialog_screen
 onready var pause_screen = $pause_screen
 
 func _process(_dt):
@@ -30,10 +30,16 @@ func unpause():
     visible = false
     paused = false
 
+func show_screen(type):
+    dash_board.visible = type == SHOP
+    dialog_screen.visible = type == DIALOG
+    pause_screen.visible = type == PAUSE
+
 func _on_dash_board_close() -> void:
     unpause()
 
-func show_screen(type):
-    dash_board.visible = type == SHOP
-    end_screen.visible = type == END
-    pause_screen.visitble = type == PAUSE
+func _on_pause_screen_close() -> void:
+    unpause()
+
+func _on_dialog_screen_close() -> void:
+    unpause()

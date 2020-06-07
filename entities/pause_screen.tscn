@@ -12,22 +12,22 @@ position = Vector2( 609.67, 336.81 )
 texture = ExtResource( 2 )
 
 [node name="back_button" parent="." instance=ExtResource( 1 )]
-position = Vector2( 622.614, 404.975 )
+position = Vector2( 597.542, 254.543 )
 
 [node name="Control" parent="back_button" index="1"]
-margin_left = -178.0
-margin_top = -39.0
-margin_right = 147.0
-margin_bottom = 65.0
+margin_left = -152.928
+margin_top = -53.103
+margin_right = 172.072
+margin_bottom = 50.897
 
 [node name="exit_button" parent="." instance=ExtResource( 1 )]
-position = Vector2( 591.934, 237.347 )
+position = Vector2( 602.903, 415.985 )
 
 [node name="Control" parent="exit_button" index="1"]
-margin_left = -150.0
-margin_top = -37.0
-margin_right = 181.0
-margin_bottom = 63.0
+margin_left = -162.888
+margin_top = -49.154
+margin_right = 168.112
+margin_bottom = 50.846
 [connection signal="clicked" from="back_button" to="." method="_on_back_button_clicked"]
 [connection signal="clicked" from="exit_button" to="." method="_on_exit_button_clicked"]
 

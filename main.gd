@@ -21,16 +21,11 @@ onready var boat_exit = $boat_exit
 onready var hud = $hud
 onready var pause_controller = $pause
 onready var dash_board = $pause/dash_board
+onready var tutorial_controller = $tutorial
 
 # constant
 
 var flag_colors = {}
-
-enum {
-    PAUSE,
-    SHOP,
-    END
-}
 
 export var group_score_factor = 1
 export var visit_factor = 10
@@ -52,7 +47,8 @@ var ticket_price = CHEAP setget set_ticket_price
 var visit_cost = 10
 var capacity # capacity of the beach in number of people
 var forest = 0  # number of forest pieces left
-var docks = 0  # number of anchor available
+var small_docks = 0  # number of small available
+var big_docks = 0 # number of big docks available
 export(int) var boats = 1 # number of boat availables
 
 # longrun variables
@@ -68,7 +64,7 @@ var kids_number = 0
 # daily variables
 var satisfaction = 0
 export var visit_today = 30
-onready var people_waiting = visit_today
+onready var people_waiting = 0
 var profit = 0
 
 # other variables
@@ -89,7 +85,7 @@ func day_review():
     
     satisfaction -= 0.5 * people_waiting
     
-    eco_anger += (docks + trash - (forest - 10))
+    eco_anger += (small_docks + big_docks + trash - (forest - 10))
     popularity += satisfaction_factor * satisfaction / visit_cost
     popularity = max(popularity, 0)  # cannot be negative
     wealth += profit
@@ -142,11 +138,11 @@ func _process(_delta):
         profit += visit_cost * 10
         boat_arrive()
     
-    if Input.is_action_just_pressed("create_dock"):
-        create_dock()
-    
     if Input.is_action_just_pressed("pause"):
         pause()
+    
+    if Input.is_action_just_pressed("create_dock"):
+        shop()
         
     hud.update_values(profit, people_waiting, wealth, eco_anger, popularity)
 
@@ -160,13 +156,14 @@ func create_dock():
         var dock = SmallDock.instance()
         slot.add_child(dock)
         dock.connect("clicked_when_free", click_controller, "_on_click_on_dock")
-        docks += 1
+        small_docks += 1
     
 func upgrade_dock():
     var slot = upgradable_dock()
     if slot:
         # upgrade dock
-        docks += 1
+        small_docks -= 1
+        big_docks += 1
     
 func upgradable_dock():
     for slot in dock_container.get_children():
@@ -216,16 +213,18 @@ func _on_boat_go_to_dock(_boat):
 
 func _on_boat_reached_dock(_boat, _dock):
     people_on_ground += 10
+    tutorial_controller.boat_reached_dock()
 
 func _on_boat_leave_dock(_boat, dock, anchor, group_score):
     satisfaction += group_score_factor * (group_score - 0.5)
     print(group_score)
     people_on_ground -= 10
     dock.free_anchor(anchor)
+    tutorial_controller.calling_back()
 
 func _on_boat_leave_screen(boat):
     free_boat += 1
-    flag_colors[boat.flag_color.to_html()] = false
+    flag_colors[boat.flag_color] = false
     boat.queue_free()
     
 func _on_disembark(boat, dock, people):
@@ -285,25 +284,14 @@ func _on_raised_flag(boat, dock, color):
         if people.group_color.is_equal_approx(color):
             people.call_back(boat, dock)
 
-func count_small_docks():
-    var count = 0
-    for slot in dock_container.get_children():
-        if slot.get_child_count() != 0:
-            var dock = slot.get_child(0)
-            if dock.is_small():
-                count += 1
-    return count
-
 func pause():
-    pause_controller.pause(PAUSE)
+    pause_controller.pause(pause_controller.PAUSE)
 
 func shop():
-    var small_docks = count_small_docks()
-    dash_board.init_values(day, wealth, ticket_price, boats, small_docks, docks - small_docks, capacity, forest)
-    pause_controller.pause(SHOP)
+    dash_board.init_values(day, wealth, ticket_price, boats, small_docks, big_docks, capacity, forest)
+    pause_controller.pause(pause_controller.SHOP)
 
 func _on_dash_board_close() -> void:
-    print("unpause !")
     var values = dash_board.get_values()
     var not_used_boats = boats - free_boat
     
@@ -316,11 +304,13 @@ func _on_dash_board_close() -> void:
     # small_docks big_docks forest
     var new_small = values[3]
     var new_big = values[4]
-    var old_big = docks - count_small_docks()
-    while docks < new_small + new_big:
+    if new_small + new_big > small_docks + big_docks:
+        tutorial_controller.build_docks()
+        
+    while small_docks + big_docks < new_small + new_big:
         create_dock()
 
-    for _i in range(new_big - old_big):
+    while big_docks < new_big:
         upgrade_dock()
     
     while forest > values[5]:
@@ -347,4 +337,12 @@ func cut_trees():
 
    
 func loose(condition):
-    pause_controller.pause(END)
+    pause_controller.pause(pause_controller.DIALOG)
+
+
+func _on_pause_screen_close() -> void:
+    pass # Replace with function body.
+
+
+func _on_tutorial_enable_visit() -> void:
+    people_waiting = visit_today

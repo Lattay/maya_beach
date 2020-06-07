@@ -1,8 +1,11 @@
 extends Node2D
 
+signal continue_tuto
+signal close
+
 onready var panda = $panda
 onready var leo = $leo
-onready var label 
+onready var label = $label
 
 onready var dialog = {
     "tuto_1": [
@@ -27,7 +30,7 @@ onready var dialog = {
     ],
     "tuto_5": [
         leo,
-        "I think you get it, work well, make money.\nAnd beware of ecologists, they are so anoying.",
+        "I think you get it. Now, work well, make money.\nAnd beware of ecologists, they are so anoying.",
         funcref(self, "advance_tuto")
     ],
     "loose_money": [
@@ -53,19 +56,22 @@ var next
 func go_to_menu():
     get_tree().change_scene("res://menu.tscn")
     
-func load_reason(dial_id):
+func load_dialog(dial_id):
     current_dialog = dial_id
     var l = dialog[dial_id]
     l[0].visible = true
     show_message(l[1])
     next = l[2]
-
     
 func you_loose():
     show_message("You loose !")
 
 func advance_tuto():
-    pass
+    emit_signal("continue_tuto")
 
 func show_message(msg):
     label.text = msg
+
+func _on_continue_clicked(event) -> void:
+    next.call_func()
+    emit_signal("close")
