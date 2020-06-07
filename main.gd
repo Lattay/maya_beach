@@ -21,17 +21,20 @@ onready var boat_exit = $boat_exit
 onready var hud = $hud
 onready var pause_controller = $pause
 onready var dash_board = $pause/dash_board
-onready var tutorial_controller = $tutorial
+onready var dialog_controller = $dialog_controller
 
 # constant
 
 var flag_colors = {}
 
+var boat_cost = 100
+var kid_cost = 10
+
 export var group_score_factor = 1
 export var visit_factor = 10
-export var hype_factor = 4
+export(float) var hype_factor = 4
 export var hype_decrease = 0.5
-export var satisfaction_factor = 10
+export(float) var satisfaction_factor = 0.3
 export var clean_beach_capacity = 200
 export(int) var cheap_ticket = 10
 export(int) var mild_ticket = 50
@@ -55,10 +58,9 @@ export(int) var boats = 1 # number of boat availables
 var day = 1
 var popularity = 2
 var eco_anger = 0
-var total_earning
 var trash = 0
-var hype = 1
-var wealth = 700
+var hype = 0
+export(int) var wealth = 1400
 var kids_number = 0
 
 # daily variables
@@ -68,6 +70,8 @@ onready var people_waiting = 0
 var profit = 0
 
 # other variables
+var forest_max
+var max_people_on_ground = 0
 onready var free_boat = boats
 onready var last_use
 onready var people_on_ground = 0
@@ -78,6 +82,7 @@ func _ready():
     for c in target_containers.get_children():
         last_use.append(0.0)
     rng.randomize()
+    forest_max = forest_container.get_child_count()
     update_forest()
 
 func day_review():
@@ -85,31 +90,36 @@ func day_review():
     
     satisfaction -= 0.5 * people_waiting
     
-    eco_anger += (small_docks + big_docks + trash - (forest - 10))
+    eco_anger = (
+        3 * (small_docks + big_docks)
+        + trash
+        + 3.6 * (forest_max - forest)
+        + 0.6 * max_people_on_ground
+    )
     popularity += satisfaction_factor * satisfaction / visit_cost
     popularity = max(popularity, 0)  # cannot be negative
     wealth += profit
     
     if eco_anger >= 100:
-        pass # loose if eco_anger reach 100
+        dialog_controller.loose_eco()
+    if wealth <= 0:
+        dialog_controller.loose_money()
+    if wealth >= 1000000:
+        dialog_controller.win()
     
     hype *= hype_decrease
     
     day += 1
     
-    print("total earning ", total_earning)
-    print("satisfaction ", satisfaction)
-    print("popularity ", popularity)
     # reset daily variables
     visit_today = 10 * int((
-        popularity  * visit_factor
-        + hype_factor * hype
+        popularity  * visit_factor * (1 + sqrt(hype_factor * hype))
         + kids_efficiency(kids_number)
     ) / 10)
     visit_today = max(visit_today, 0)
     people_waiting = visit_today
     satisfaction = 0
-    profit = 0
+    profit = - boats * boat_cost - kids_number * kid_cost
 
 func set_ticket_price(val):
     ticket_price = val
@@ -143,6 +153,9 @@ func _process(_delta):
     
     if Input.is_action_just_pressed("create_dock"):
         shop()
+        
+    if people_on_ground > max_people_on_ground:
+        max_people_on_ground = people_on_ground
         
     hud.update_values(profit, people_waiting, wealth, eco_anger, popularity)
 
@@ -212,15 +225,16 @@ func _on_boat_go_to_dock(_boat):
     boat_driver_enter.reset()
 
 func _on_boat_reached_dock(_boat, _dock):
-    people_on_ground += 10
-    tutorial_controller.boat_reached_dock()
+    dialog_controller.boat_reached_dock()
+
+func _on_boat_leave_dock_empty(_boat, dock, anchor):
+    dock.free_anchor(anchor)
 
 func _on_boat_leave_dock(_boat, dock, anchor, group_score):
-    satisfaction += group_score_factor * (group_score - 0.5)
-    print(group_score)
     people_on_ground -= 10
+    satisfaction += group_score_factor * (group_score - 0.5)
     dock.free_anchor(anchor)
-    tutorial_controller.calling_back()
+    dialog_controller.calling_back()
 
 func _on_boat_leave_screen(boat):
     free_boat += 1
@@ -228,6 +242,7 @@ func _on_boat_leave_screen(boat):
     boat.queue_free()
     
 func _on_disembark(boat, dock, people):
+    people_on_ground += people.quantity
     var target = dock.get_node("target")
     var spawner = dock.get_node("spawner")
     tourist_container.add_child(people)
@@ -305,7 +320,7 @@ func _on_dash_board_close() -> void:
     var new_small = values[3]
     var new_big = values[4]
     if new_small + new_big > small_docks + big_docks:
-        tutorial_controller.build_docks()
+        dialog_controller.build_docks()
         
     while small_docks + big_docks < new_small + new_big:
         create_dock()
@@ -344,5 +359,5 @@ func _on_pause_screen_close() -> void:
     pass # Replace with function body.
 
 
-func _on_tutorial_enable_visit() -> void:
+func _on_dialog_controller_enable_visit() -> void:
     people_waiting = visit_today
