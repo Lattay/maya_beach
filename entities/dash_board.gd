@@ -55,7 +55,15 @@ func init_values(day, new_wealth, new_ticket_price, new_boats, new_small_docks, 
     forest = new_forest
     set_wealth(new_wealth)
     set_ticket_price(new_ticket_price)
-    
+        
+func get_values():
+    return [
+        wealth, ticket_price, boats,
+        small_docks, big_docks, forest,
+        hired_kids, instagram_investment,
+        corruption_investment
+    ]
+
 func set_wealth(val):
     wealth = val
     wealth_label.update_value(wealth)
@@ -85,34 +93,26 @@ func set_ticket_price(val):
             cursor.position = ref_mild.position
         EXPENSIVE:
             cursor.position = ref_expensive.position
-    
-func get_values():
-    return [
-        boats, small_docks,
-        big_docks, forest,
-        hired_kids, instagram_investment,
-        corruption_investment, ticket_price
-    ]
+
 
 func cannot_pay():
     pass
 
-func _on_boat_button_clicked(event) -> void:
+func _on_boat_button_clicked(_event) -> void:
     if wealth > boat_price + boat_cost:
         set_boats(boats + 1)
         set_wealth(wealth - boat_price)
     else:
         cannot_pay()
 
-func _on_dock_button_clicked(event) -> void:
-    print("hey")
-    if wealth > small_dock_price:
+func _on_dock_button_clicked(_event) -> void:
+    if wealth > small_dock_price and small_docks + big_docks < 8:
         set_small_docks(small_docks + 1)
         set_wealth(wealth - small_dock_price)
     else:
         cannot_pay()
 
-func _on_upgrade_button_clicked(event) -> void:
+func _on_upgrade_button_clicked(_event) -> void:
     if wealth > big_dock_price and small_docks > 0:
         set_small_docks(small_docks - 1)
         set_big_docks(big_docks + 1)
@@ -120,43 +120,43 @@ func _on_upgrade_button_clicked(event) -> void:
     else:
         cannot_pay()
 
-func _on_deforest_button_clicked(event) -> void:
+func _on_deforest_button_clicked(_event) -> void:
     if wealth > deforest_price and forest > 0:
         forest -= 1
         set_wealth(wealth - deforest_price)
     else:
         cannot_pay()
 
-func _on_insta_button_clicked(event) -> void:
+func _on_insta_button_clicked(_event) -> void:
     if wealth > insta_price:
         instagram_investment += 1
         set_wealth(wealth - insta_price)
     else:
         cannot_pay()
 
-func _on_corrupt_button_clicked(event) -> void:
+func _on_corrupt_button_clicked(_event) -> void:
     if wealth > corrupt_price:
         corruption_investment += 1
         set_wealth(wealth - corrupt_price)
     else:
         cannot_pay()
 
-func _on_kid_button_clicked(event) -> void:
+func _on_kid_button_clicked(_event) -> void:
     if wealth > kid_price:
         hired_kids += 1
         set_wealth(wealth - kid_price)
     else:
         cannot_pay()
 
-func _on_close_button_clicked(event) -> void:
+func _on_close_button_clicked(_event) -> void:
     emit_signal("close")
 
-func _on_cheap_button_clicked(event) -> void:
+func _on_cheap_button_clicked(_event) -> void:
     set_ticket_price(CHEAP)
 
-func _on_mild_button_clicked(event) -> void:
+func _on_mild_button_clicked(_event) -> void:
      set_ticket_price(MILD)
 
 
-func _on_expensive_button_clicked(event) -> void:
+func _on_expensive_button_clicked(_event) -> void:
     set_ticket_price(EXPENSIVE)

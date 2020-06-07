@@ -69,7 +69,6 @@ script = ExtResource( 3 )
 
 [node name="exit" type="Position2D" parent="."]
 position = Vector2( 51.1213, 188.607 )
-script = ExtResource( 3 )
 
 [node name="spawner" type="Position2D" parent="."]
 position = Vector2( 6.3175, 84.8353 )

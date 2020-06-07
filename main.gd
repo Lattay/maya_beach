@@ -24,10 +24,13 @@ onready var dash_board = $pause/dash_board
 
 # constant
 
-var flag_colors = {
-    "blue": true,
-    "orange": true
-   }
+var flag_colors = {}
+
+enum {
+    PAUSE,
+    SHOP,
+    END
+}
 
 export var group_score_factor = 1
 export var visit_factor = 10
@@ -48,7 +51,7 @@ enum {
 var ticket_price = CHEAP setget set_ticket_price
 var visit_cost = 10
 var capacity # capacity of the beach in number of people
-var forest  # number of forest pieces left
+var forest = 0  # number of forest pieces left
 var docks = 0  # number of anchor available
 export(int) var boats = 1 # number of boat availables
 
@@ -222,7 +225,7 @@ func _on_boat_leave_dock(_boat, dock, anchor, group_score):
 
 func _on_boat_leave_screen(boat):
     free_boat += 1
-    flag_colors[boat.flag_color] = true
+    flag_colors[boat.flag_color.to_html()] = false
     boat.queue_free()
     
 func _on_disembark(boat, dock, people):
@@ -258,13 +261,28 @@ func _on_ask_for_target(people, prev_target):
 
 func get_available_color():
     for color in flag_colors.keys():
-        if flag_colors[color] == true:
-            flag_colors[color] = false
+        if flag_colors[color] == false:
+            flag_colors[color] = true
             return color
+    var color = gen_random_color()
+    flag_colors[color] = true
+    return color
+
+func gen_random_color():
+    var col = Color(rng.randf(), rng.randf(), rng.randf())
+    while is_in_flags(col):
+        col = Color(rng.randf(), rng.randf(), rng.randf())
+    return col
+
+func is_in_flags(col):
+    for color in flag_colors.keys():
+        if col.is_equal_approx(color):
+            return true
+    return false
 
 func _on_raised_flag(boat, dock, color):
     for people in tourist_container.get_children():
-        if people.group_color == color:
+        if people.group_color.is_equal_approx(color):
             people.call_back(boat, dock)
 
 func count_small_docks():
@@ -277,40 +295,56 @@ func count_small_docks():
     return count
 
 func pause():
-    print("pause !")
+    pause_controller.pause(PAUSE)
+
+func shop():
     var small_docks = count_small_docks()
     dash_board.init_values(day, wealth, ticket_price, boats, small_docks, docks - small_docks, capacity, forest)
-    pause_controller.pause()
-
+    pause_controller.pause(SHOP)
 
 func _on_dash_board_close() -> void:
     print("unpause !")
     var values = dash_board.get_values()
-    # boat small_docks big_docks forest hired_kids instagram_investment corrupt_investment
     var not_used_boats = boats - free_boat
-    boats = values[0]
+    
+    # wealth tiche_price boat
+    wealth = values[0]
+    set_ticket_price(values[1])
+    boats = values[2]
     free_boat = boats - not_used_boats
     
-    # update docks
+    # small_docks big_docks forest
+    var new_small = values[3]
+    var new_big = values[4]
+    var old_big = docks - count_small_docks()
+    while docks < new_small + new_big:
+        create_dock()
+
+    for _i in range(new_big - old_big):
+        upgrade_dock()
     
-    while forest > values[3]:
+    while forest > values[5]:
         cut_trees()
     
-    kids_number += values[4]
+    # hired_kids instagram_investment corrupt_investment
+    kids_number += values[6]
     
-    hype += 2 * values[5]
-    eco_anger -= 10 * values[6]
+    hype += 2 * values[7]
+    eco_anger -= 10 * values[8]
     eco_anger = max(0, eco_anger)
     
-    set_ticket_price(values[7])
     
 func cut_trees():
     var trees = null
     var max_y = 0
-    for child in forest_container:
+    for child in forest_container.get_children():
         if child.position.y > max_y:
             trees = child
             max_y = child.position.y
     if trees != null:
         forest -= 1
         trees.queue_free()
+
+   
+func loose(condition):
+    pause_controller.pause(END)

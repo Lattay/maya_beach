@@ -27,5 +27,4 @@ func set_length(target_length):
         
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
     if anim_name == "time_run":
-        player.set_playback_speed(1.0)
-        player.play("time_out")
+        player.play("time_out", 1.0)

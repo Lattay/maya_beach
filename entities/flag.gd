@@ -1,20 +1,20 @@
-extends Sprite
+extends Node2D
 
 const Gauge = preload("res://entities/gauge.tscn")
 
 signal clicked(flag)
 
-onready var player = $AnimationPlayer
 onready var clickable = $in_play_clickable
+onready var sprite = $sprite
 
 var flag_color
 var has_gauge = false
 
 func set_color(color):
-    player.play(color)
     flag_color = color
+    sprite.modulate = color
 
-func _on_clicked(event) -> void:
+func _on_clicked(_event) -> void:
     if has_gauge:
         emit_signal("clicked", self)
 

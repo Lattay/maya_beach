@@ -8,6 +8,7 @@ export(float, 0, 1) var angular_momentum = 0.5
 export(int, 1, 3) var quantity = 1
 
 signal ask_for_target(people, prev_target)
+signal set_color(color)
 
 enum State {
     IDLE,
@@ -86,8 +87,8 @@ func leave_dock(pos):
     state = State.LEAVE_DOCK
 
 func set_color(color):
-    player.play(color)
     group_color = color
+    emit_signal("set_color", color)
     
 func call_back(boat, dock):
     state = State.GO_BACK_TO_DOCK

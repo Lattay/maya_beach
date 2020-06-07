@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://components/control_clickable.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/pause.png" type="Texture" id=2]
+[ext_resource path="res://entities/pause_screen.gd" type="Script" id=3]
+
+[node name="pause_screen" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 609.67, 336.81 )
+texture = ExtResource( 2 )
+
+[node name="back_button" parent="." instance=ExtResource( 1 )]
+position = Vector2( 622.614, 404.975 )
+
+[node name="Control" parent="back_button" index="1"]
+margin_left = -178.0
+margin_top = -39.0
+margin_right = 147.0
+margin_bottom = 65.0
+
+[node name="exit_button" parent="." instance=ExtResource( 1 )]
+position = Vector2( 591.934, 237.347 )
+
+[node name="Control" parent="exit_button" index="1"]
+margin_left = -150.0
+margin_top = -37.0
+margin_right = 181.0
+margin_bottom = 63.0
+[connection signal="clicked" from="back_button" to="." method="_on_back_button_clicked"]
+[connection signal="clicked" from="exit_button" to="." method="_on_exit_button_clicked"]
+
+[editable path="back_button"]
+
+[editable path="exit_button"]

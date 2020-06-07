@@ -37,6 +37,7 @@ position = Vector2( 396.648, 339.549 )
 value = 400.0
 
 [node name="big_dock_price" parent="." instance=ExtResource( 2 )]
+visible = false
 position = Vector2( 398.515, 386.854 )
 value = 200.0
 
@@ -93,6 +94,7 @@ margin_bottom = 19.0
 
 [node name="upgrade_button" parent="." instance=ExtResource( 3 )]
 position = Vector2( 276.53, 395.403 )
+enabled = false
 show_hover = true
 
 [node name="Sprite" parent="upgrade_button" index="0"]
