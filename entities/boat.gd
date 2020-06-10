@@ -11,6 +11,7 @@ signal disembark(boat, dock, people)
 signal raised_flag(boat, dock, flag)
 signal leave_dock(boat, dock, anchor)
 signal leave_screen(boat)
+signal leave_on_time_out(flag)
 
 # input
 signal clicked_when_waiting_for_dock(boat)
@@ -209,3 +210,11 @@ func leave():
     emit_signal("leave_dock", self, attached_dock, attached_anchor, group_score)
     state = State.LEAVE
     target = way_out.get_global_position()
+
+func _on_time_out(flag):
+    if state == State.WAITING_FOR_SLOT:
+        attached_dock = null
+        attached_anchor = null
+        group_score = 0
+        leave()
+        emit_signal("leave_on_time_out", flag)

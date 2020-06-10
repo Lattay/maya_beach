@@ -50,8 +50,8 @@ position = Vector2( 381.709, 484.576 )
 value = 1500.0
 
 [node name="insta_price" parent="." instance=ExtResource( 2 )]
-position = Vector2( 673.695, 457.189 )
-value = 1200.0
+position = Vector2( 673.695, 456.095 )
+value = 2500.0
 
 [node name="corrupt_price" parent="." instance=ExtResource( 2 )]
 position = Vector2( 826.047, 458.434 )

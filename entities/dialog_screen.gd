@@ -53,8 +53,13 @@ onready var dialog = {
 var current_dialog
 var next
 
+func _process(_dt):
+    if Input.is_action_just_pressed("ui_accept"):
+        next.call_func()
+        emit_signal("close")
+
 func go_to_menu():
-    get_tree().change_scene("res://menu.tscn")
+    var _dummy = get_tree().change_scene("res://menu.tscn")
     
 func load_dialog(dial_id):
     current_dialog = dial_id
@@ -64,7 +69,10 @@ func load_dialog(dial_id):
     next = l[2]
     
 func you_loose():
-    show_message("You loose !")
+    var _dummy = get_tree().change_scene("res://you_loose.tscn")
+
+func you_win():
+    var _dummy = get_tree().change_scene("res://you_win.tscn")
 
 func advance_tuto():
     emit_signal("continue_tuto")
@@ -72,6 +80,6 @@ func advance_tuto():
 func show_message(msg):
     label.text = msg
 
-func _on_continue_clicked(event) -> void:
+func _on_continue_clicked(_event) -> void:
     next.call_func()
     emit_signal("close")

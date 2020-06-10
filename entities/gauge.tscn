@@ -8,7 +8,7 @@ resource_name = "time_out"
 length = 2.0
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath("../gauge_bar:scale")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -37,6 +37,8 @@ tracks/0/keys = {
 }
 
 [node name="gauge" type="Node2D"]
+position = Vector2( 657.56, 321.931 )
+scale = Vector2( 1.2, 1.2 )
 script = ExtResource( 1 )
 
 [node name="player" type="AnimationPlayer" parent="."]
@@ -47,10 +49,10 @@ anims/time_run = SubResource( 2 )
 position = Vector2( -100, 0 )
 texture = ExtResource( 2 )
 region_enabled = true
-region_rect = Rect2( 44, 27, 214, 37 )
+region_rect = Rect2( 42, 65, 215, 30 )
 
 [node name="cursor" type="Sprite" parent="gauge_bar"]
-position = Vector2( -100, 0 )
+position = Vector2( 76, 0 )
 texture = ExtResource( 2 )
 region_enabled = true
 region_rect = Rect2( 0, 14, 42, 63 )

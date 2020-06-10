@@ -3,12 +3,14 @@ extends Node2D
 const Gauge = preload("res://entities/gauge.tscn")
 
 signal clicked(flag)
+signal time_out(flag)
 
 onready var clickable = $in_play_clickable
 onready var sprite = $sprite
 
 var flag_color
 var has_gauge = false
+var score_strength
 
 func set_color(color):
     flag_color = color
@@ -17,6 +19,9 @@ func set_color(color):
 func _on_clicked(_event) -> void:
     if has_gauge:
         emit_signal("clicked", self)
+
+func _on_time_out():
+    emit_signal("time_out", self)
 
 func select():
     clickable.select()
@@ -28,6 +33,9 @@ func add_gauge():
     var gauge = Gauge.instance()
     gauge.position = Vector2.LEFT * 25 + Vector2.UP * 10
     add_child(gauge)
+    gauge.connect("time_out", self, "_on_time_out")
+    gauge.set_strength(score_strength)
+    gauge.scale = Vector2(1.5, 1.5)
     gauge.start()
     has_gauge = true
     
@@ -38,3 +46,6 @@ func drop_gauge():
     gauge.queue_free()
     has_gauge = false
     return score
+
+func set_strength(strength):
+    score_strength = strength

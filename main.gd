@@ -30,12 +30,12 @@ var flag_colors = {}
 var boat_cost = 100
 var kid_cost = 10
 
-export var group_score_factor = 1
-export var visit_factor = 10
+export(float) var group_score_factor = 1
+export(float) var visit_factor = 10
 export(float) var hype_factor = 4
-export var hype_decrease = 0.5
+export(float) var hype_decrease = 0.5
 export(float) var satisfaction_factor = 0.3
-export var clean_beach_capacity = 200
+export(int) var clean_beach_capacity = 200
 export(int) var cheap_ticket = 10
 export(int) var mild_ticket = 50
 export(int) var expensive_ticket = 300
@@ -135,7 +135,7 @@ func kids_efficiency(kids):
     if kids < 1:
         return 0
     else:
-        return int(18.34 * kids - 13)
+        return sqrt(18.34 * kids - 13)
     
 func _process(_delta):
     if (
@@ -145,13 +145,12 @@ func _process(_delta):
         and boat_driver_enter.is_free
     ):
         people_waiting -= 10
-        profit += visit_cost * 10
         boat_arrive()
     
     if Input.is_action_just_pressed("pause"):
         pause()
     
-    if Input.is_action_just_pressed("create_dock"):
+    if Input.is_action_just_pressed("shop"):
         shop()
         
     if people_on_ground > max_people_on_ground:
@@ -207,8 +206,18 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     boat.set_global_rotation(rot)
     var flag_color = get_available_color()
     boat.set_flag_color(flag_color)
-    var new_flag = flag_container.spawn_flag(boat.get_global_position(), flag_color)
+    var flag_strength
+    match ticket_price:
+        CHEAP:
+            flag_strength = 0
+        MILD:
+            flag_strength = 1
+        EXPENSIVE:
+            flag_strength = 2
+    var new_flag = flag_container.spawn_flag(boat.get_global_position(), flag_color, flag_strength)
     new_flag.connect("clicked", click_controller, "_on_click_on_flag")
+    new_flag.connect("time_out", boat, "_on_time_out")
+    
     boat.wait_for_slot()
     boat.set_way_out(boat_exit)
     boat.connect("go_to_dock", self, "_on_boat_go_to_dock")
@@ -220,21 +229,26 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     
     boat.connect("clicked_when_waiting_for_dock", click_controller, "_on_click_on_waiting_boat")
     boat.connect("clicked_when_docked", click_controller, "_on_click_on_docked_boat")
+    boat.connect("leave_on_time_out", flag_container, "_on_boat_leave_on_time_out")
 
 func _on_boat_go_to_dock(_boat):
     boat_driver_enter.reset()
 
 func _on_boat_reached_dock(_boat, _dock):
+    profit += visit_cost * 10
     dialog_controller.boat_reached_dock()
 
 func _on_boat_leave_dock_empty(_boat, dock, anchor):
     dock.free_anchor(anchor)
 
 func _on_boat_leave_dock(_boat, dock, anchor, group_score):
-    people_on_ground -= 10
-    satisfaction += group_score_factor * (group_score - 0.5)
-    dock.free_anchor(anchor)
-    dialog_controller.calling_back()
+    if dock != null:
+        people_on_ground -= 10
+        dock.free_anchor(anchor)
+        dialog_controller.calling_back()  # only for tutorial
+    else:
+        boat_driver_enter.reset()
+    satisfaction += group_score_factor * (group_score - 0.3)
 
 func _on_boat_leave_screen(boat):
     free_boat += 1
@@ -334,7 +348,7 @@ func _on_dash_board_close() -> void:
     # hired_kids instagram_investment corrupt_investment
     kids_number += values[6]
     
-    hype += 2 * values[7]
+    hype += 4 * values[7]
     eco_anger -= 10 * values[8]
     eco_anger = max(0, eco_anger)
     
@@ -350,14 +364,16 @@ func cut_trees():
         forest -= 1
         trees.queue_free()
 
-   
-func loose(condition):
-    pause_controller.pause(pause_controller.DIALOG)
-
-
 func _on_pause_screen_close() -> void:
     pass # Replace with function body.
 
-
 func _on_dialog_controller_enable_visit() -> void:
     people_waiting = visit_today
+
+
+func _on_in_shop_button_clicked(event) -> void:
+    shop()
+
+
+func _on_in_pause_button_clicked(event) -> void:
+    pause()

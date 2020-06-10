@@ -3,8 +3,9 @@ extends Node
 const Flag = preload("res://entities/flag.tscn")
 var flags = []
 
-func spawn_flag(start_pos, color):
+func spawn_flag(start_pos, color, strength):
     var new_flag = Flag.instance()
+    new_flag.set_strength(strength)
     add_child(new_flag)
     flags.append(new_flag)
     new_flag.set_global_position(start_pos)
@@ -29,3 +30,6 @@ func drop_flag(flag):
     var score = flag.drop_gauge()
     remove_child(flag)
     return score
+    
+func _on_boat_leave_on_time_out(flag):
+    drop_flag(flag)
