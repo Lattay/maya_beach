@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/mockup.png" type="Texture" id=1]
+[ext_resource path="res://components/control_clickable.tscn" type="PackedScene" id=2]
+[ext_resource path="res://change_scene.gd" type="Script" id=3]
+
+[node name="change_scene" type="Node2D"]
+scale = Vector2( 0.7, 0.7 )
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 14.307, 500.512, 302.104, 135.152 )
+
+[node name="in_play_clickable" parent="." instance=ExtResource( 2 )]
+
+[node name="Control" parent="in_play_clickable" index="1"]
+margin_left = -140.0
+margin_top = -53.0
+margin_right = 144.0
+margin_bottom = 58.0
+[connection signal="clicked" from="in_play_clickable" to="." method="_on_in_play_clickable_clicked"]
+
+[editable path="in_play_clickable"]

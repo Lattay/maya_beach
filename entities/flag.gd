@@ -11,14 +11,18 @@ onready var sprite = $sprite
 var flag_color
 var has_gauge = false
 var score_strength
+var unlocked = false
 
 func set_color(color):
     flag_color = color
     sprite.modulate = color
 
 func _on_clicked(_event) -> void:
-    if has_gauge:
+    if has_gauge and unlocked:
         emit_signal("clicked", self)
+
+func _on_boat_reach_dock(_boat, _dock):
+    unlocked = true
 
 func _on_time_out():
     emit_signal("time_out", self)

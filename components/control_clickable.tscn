@@ -24,3 +24,5 @@ __meta__ = {
 [connection signal="focus_entered" from="Control" to="." method="_on_focus_entered"]
 [connection signal="focus_exited" from="Control" to="." method="_on_focus_exited"]
 [connection signal="gui_input" from="Control" to="." method="_on_input_event"]
+[connection signal="mouse_entered" from="Control" to="." method="_on_focus_entered"]
+[connection signal="mouse_exited" from="Control" to="." method="_on_focus_exited"]

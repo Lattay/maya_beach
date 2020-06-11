@@ -93,12 +93,13 @@ func day_review():
     day_night.playback_speed = 1
     satisfaction -= 0.5 * people_waiting
     
-    eco_anger = (
-        3 * (small_docks + big_docks)
+    eco_anger = min(100, 
+        4 * (small_docks + big_docks)
         + trash
-        + 3.6 * (forest_max - forest)
+        + 4 * (forest_max - forest)
         + 0.6 * max_people_on_ground
     )
+    
     popularity += satisfaction_factor * satisfaction / visit_cost
     popularity = max(popularity, 0)  # cannot be negative
     wealth += profit
@@ -107,7 +108,7 @@ func day_review():
         dialog_controller.loose_eco()
     if wealth <= 0:
         dialog_controller.loose_money()
-    if wealth >= 1000000:
+    if wealth >= 50000:
         dialog_controller.win()
     
     hype *= hype_decrease
@@ -142,8 +143,6 @@ func kids_efficiency(kids):
         return sqrt(18.34 * kids - 13)
     
 func _process(_delta):
-    if not is_tuto and people_waiting == 0 and people_on_ground == 0 && free_boat == boats:
-        day_night.playback_speed = 8
     if (
         people_waiting >= 10
         and free_boat  > 0
@@ -224,6 +223,7 @@ func _on_boat_driver_entered(_anim_name: String) -> void:
     new_flag.connect("clicked", click_controller, "_on_click_on_flag")
     new_flag.connect("time_out", boat, "_on_time_out")
     
+    boat.connect("reached_dock", new_flag, "_on_boat_reached_dock")
     boat.wait_for_slot()
     boat.set_way_out(boat_exit)
     boat.connect("go_to_dock", self, "_on_boat_go_to_dock")
@@ -262,6 +262,9 @@ func _on_boat_leave_screen(boat):
     free_boat += 1
     flag_colors[boat.flag_color] = false
     boat.queue_free()
+    
+    if not is_tuto and people_waiting == 0 and people_on_ground == 0 && free_boat == boats:
+        day_night.playback_speed = 8
     
 func _on_disembark(boat, dock, people):
     people_on_ground += people.quantity
@@ -380,11 +383,11 @@ func _on_dialog_controller_enable_visit() -> void:
     people_waiting = visit_today
 
 
-func _on_in_shop_button_clicked(event) -> void:
+func _on_in_shop_button_clicked(_event) -> void:
     shop()
 
 
-func _on_in_pause_button_clicked(event) -> void:
+func _on_in_pause_button_clicked(_event) -> void:
     pause()
 
 
