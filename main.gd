@@ -22,6 +22,7 @@ onready var hud = $hud
 onready var pause_controller = $pause
 onready var dash_board = $pause/dash_board
 onready var dialog_controller = $dialog_controller
+onready var day_night = $CanvasModulate/day_night
 
 # constant
 
@@ -59,7 +60,7 @@ var day = 1
 var popularity = 2
 var eco_anger = 0
 var trash = 0
-var hype = 0
+export(float) var hype = 1
 export(int) var wealth = 1400
 var kids_number = 0
 
@@ -76,6 +77,8 @@ onready var free_boat = boats
 onready var last_use
 onready var people_on_ground = 0
 
+var is_tuto = true
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
     last_use = Array()
@@ -87,7 +90,7 @@ func _ready():
 
 func day_review():
     # update longrun variables
-    
+    day_night.playback_speed = 1
     satisfaction -= 0.5 * people_waiting
     
     eco_anger = (
@@ -116,6 +119,7 @@ func day_review():
         popularity  * visit_factor * (1 + sqrt(hype_factor * hype))
         + kids_efficiency(kids_number)
     ) / 10)
+    
     visit_today = max(visit_today, 0)
     people_waiting = visit_today
     satisfaction = 0
@@ -138,6 +142,8 @@ func kids_efficiency(kids):
         return sqrt(18.34 * kids - 13)
     
 func _process(_delta):
+    if not is_tuto and people_waiting == 0 and people_on_ground == 0 && free_boat == boats:
+        day_night.playback_speed = 8
     if (
         people_waiting >= 10
         and free_boat  > 0
@@ -236,7 +242,8 @@ func _on_boat_go_to_dock(_boat):
 
 func _on_boat_reached_dock(_boat, _dock):
     profit += visit_cost * 10
-    dialog_controller.boat_reached_dock()
+    if is_tuto:
+        dialog_controller.boat_reached_dock()
 
 func _on_boat_leave_dock_empty(_boat, dock, anchor):
     dock.free_anchor(anchor)
@@ -245,7 +252,8 @@ func _on_boat_leave_dock(_boat, dock, anchor, group_score):
     if dock != null:
         people_on_ground -= 10
         dock.free_anchor(anchor)
-        dialog_controller.calling_back()  # only for tutorial
+        if is_tuto:
+            dialog_controller.calling_back()
     else:
         boat_driver_enter.reset()
     satisfaction += group_score_factor * (group_score - 0.3)
@@ -333,7 +341,8 @@ func _on_dash_board_close() -> void:
     # small_docks big_docks forest
     var new_small = values[3]
     var new_big = values[4]
-    if new_small + new_big > small_docks + big_docks:
+    
+    if is_tuto and new_small + new_big > small_docks + big_docks:
         dialog_controller.build_docks()
         
     while small_docks + big_docks < new_small + new_big:
@@ -377,3 +386,7 @@ func _on_in_shop_button_clicked(event) -> void:
 
 func _on_in_pause_button_clicked(event) -> void:
     pause()
+
+
+func _on_dialog_controller_tuto_end() -> void:
+    is_tuto = false

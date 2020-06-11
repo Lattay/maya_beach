@@ -5,7 +5,7 @@ func _on_play_button_clicked(event) -> void:
 
 
 func _on_about_button_clicked(event) -> void:
-    pass # get_tree().change_scene("res://credit.tscn")
+    get_tree().change_scene("res://credit.tscn")
 
 
 func _on_exit_button_clicked(event) -> void:

@@ -20,6 +20,7 @@
 script/source = "extends Node2D
 
 signal enable_visit
+signal tuto_end
 
 var tuto_state = 0
 onready var pause_controller = $\"../pause\"
@@ -40,13 +41,13 @@ func _process(_dt):
             dialog(\"tuto_5\")
 
 func dialog(name):
-    print(\"dial\")
     dialog_screen.load_dialog(name)
     pause_controller.pause(pause_controller.DIALOG)
-    print(\"og\")
 
 func _on_dialog_screen_continue_tuto() -> void:
     tuto_state += 1
+    if tuto_state == 8:
+        emit_signal(\"tuto_end\")
 
 func build_docks():
     print(\"docks: \", tuto_state)
@@ -165,7 +166,7 @@ blend_mode = 1
 script = ExtResource( 7 )
 group_score_factor = 1.5
 hype_factor = 0.005
-satisfaction_factor = 0.35
+satisfaction_factor = 3.0
 mild_ticket = 20
 expensive_ticket = 50
 
@@ -347,7 +348,7 @@ script = ExtResource( 6 )
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color( 1, 0.901961, 0.784314, 1 )
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasModulate"]
+[node name="day_night" type="AnimationPlayer" parent="CanvasModulate"]
 autoplay = "daynight"
 anims/daynight = SubResource( 4 )
 
@@ -403,11 +404,12 @@ visible = false
 [node name="pause_screen" parent="pause" instance=ExtResource( 12 )]
 visible = false
 [connection signal="enable_visit" from="dialog_controller" to="." method="_on_dialog_controller_enable_visit"]
+[connection signal="tuto_end" from="dialog_controller" to="." method="_on_dialog_controller_tuto_end"]
 [connection signal="animation_finished" from="boat_driver_enter/AnimationPlayer" to="." method="_on_boat_driver_entered"]
 [connection signal="clicked" from="hud/pause_button/in_play_clickable" to="." method="_on_in_pause_button_clicked"]
 [connection signal="clicked" from="hud/shop_button/in_play_clickable" to="." method="_on_in_shop_button_clicked"]
-[connection signal="close" from="pause/dash_board" to="." method="_on_dash_board_close"]
 [connection signal="close" from="pause/dash_board" to="pause" method="_on_dash_board_close"]
+[connection signal="close" from="pause/dash_board" to="." method="_on_dash_board_close"]
 [connection signal="close" from="pause/dialog_screen" to="pause" method="_on_dialog_screen_close"]
 [connection signal="continue_tuto" from="pause/dialog_screen" to="dialog_controller" method="_on_dialog_screen_continue_tuto"]
 [connection signal="close" from="pause/pause_screen" to="pause" method="_on_pause_screen_close"]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/beach.png" type="Texture" id=1]
+[ext_resource path="res://assets/font.tres" type="BitmapFont" id=2]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="beach" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Label" type="Label" parent="beach"]
+margin_left = 18.3384
+margin_top = 50.5103
+margin_right = 1170.34
+margin_bottom = 655.51
+custom_fonts/font = ExtResource( 2 )
+text = "This game have been created
+ by Theo Cavignac for the
+ I Can't Draw But I Want to Make a Game game jam.
+
+By the way, it is not finished.
+
+It uses Godot as its engine.
+GIMP was used for the graphics.
+It was fully mouse painted.
+
+It is a free and open-source
+software made with FOSS.
+See sources on my github, I am lattay
+Enjoy !
+"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

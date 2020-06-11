@@ -2,8 +2,8 @@ extends KinematicBody2D
 
 export(int) var speed = 200
 export(int) var accel = 300
-export(int) var concentration_min = 1
-export(int) var concentration_max = 3
+export(float) var concentration_min = 1
+export(float) var concentration_max = 3
 export(float, 0, 1) var angular_momentum = 0.5
 export(int, 1, 3) var quantity = 1
 

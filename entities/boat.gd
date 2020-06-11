@@ -23,6 +23,7 @@ onready var clickable = $in_play_clickable
 
 
 const Couple = preload("res://entities/couple.tscn")
+const Solo = preload("res://entities/solo.tscn")
 
 enum State {
     TRACKING,
@@ -167,7 +168,11 @@ func _on_Timer_timeout() -> void:
 
 func disembark_people():
     if docked_phase == DISEMBARKING and on_board > 0:
-        var people = Couple.instance()
+        var people
+        if on_board >= 2 and randf() < 0.7:
+            people = Couple.instance()
+        else:
+            people = Solo.instance()
         on_board -= people.quantity
         update_gauge()
         emit_signal("disembark", self, attached_dock, people)
